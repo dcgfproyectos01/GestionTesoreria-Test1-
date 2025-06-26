@@ -1,0 +1,157 @@
+
+<!-- Contenedor estándar -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+    <!-- FORMULARIO -->
+    <div @slideDown class="w-full md:col-span-2 p-6 sm:p-8 bg-gray-50 rounded-lg shadow-md text-sm">
+
+        <!-- TÍTULO DE PÁGINA-->
+        <div class="!text-green-600 mb-6 w-fit rounded flex gap-2 !text-xl items-center">
+            <mat-icon> edit_square </mat-icon>
+            <h2 class="font-semibold ">Ingresar información de funcionario</h2> 
+        </div>
+
+        <!-- Formulario -->
+        <form [formGroup]="analisisForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-4 mt-4">
+
+            <div class="grid grid-cols-12">
+                <!-- COLUMNA IZQUIERDA -->
+                <div class="col-span-9 px-4">
+
+                    <!-- FILA 1: RUT + NOMBRE + GRADO -->
+                    <div class="grid md:grid-cols-13 gap-4 mb-4 items-end">
+
+                        <!-- RUT -->
+                        <div class="md:col-span-4 flex flex-col gap-2">
+                            <label for="rutFuncioario" class="font-medium">Rut:</label>
+                            <input type="text" id="rutFuncioario" formControlName="rutFuncioario" class="p-2 border border-gray-300 rounded" placeholder="Ej: 17524863-5">
+                        </div>
+
+                        <!-- NOMBRE -->
+                        <div class="md:col-span-4 flex flex-col gap-2">
+                            <label for="nombreFuncionario" class="font-medium">Nombre completo:</label>
+                            <input type="text" id="nombreFuncionario" formControlName="nombreFuncionario" class="p-2 border border-gray-300 rounded" placeholder="Ej: Juan Salinas">
+                        </div>
+
+                        <!-- GRADO -->
+                        <div class="md:col-span-4 flex flex-col gap-2">
+                            <label for="gradoFuncionario" class="font-medium">Grado:</label>
+                            <select id="gradoFuncionario" formControlName="gradoFuncionario" class="p-2 border border-gray-300 rounded">
+                                <option value="" selected disabled>Seleccione un tipo</option>
+                                <option *ngFor="let tipo of gradoFuncionario" [value]="tipo.id">{{ tipo.nombre }}</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <!-- FILA 2: CONCEPTO + DOE + MOTIVO BLOQUEO  -->
+                    <div class="grid md:grid-cols-13 gap-4 mb-4 items-end">
+
+                        <!-- CONCEPTO -->
+                        <div class="md:col-span-4 flex flex-col gap-2">
+                        <label for="concepto" class="font-medium">Concepto:</label>
+                        <select id="concepto" formControlName="concepto" class="p-2 border border-gray-300 rounded">
+                            <option value="" selected disabled>Seleccione un concepto</option>
+                            <option *ngFor="let c of conceptos" [value]="c.id">{{ c.nombre }}</option>
+                        </select>
+                        </div>
+
+                        <!-- DOE -->
+                        <div class="md:col-span-4 flex flex-col gap-2">
+                            <label for="ncuDOE" class="font-medium">Documento Electrónico (N.C.U):</label>
+                            <input type="text" id="ncuDOE" formControlName="ncuDOE" class="p-2 border border-gray-300 rounded" placeholder="Ej: 230575042">
+                        </div>
+
+                        <!-- MOTIVO DE BLOQUEO -->
+                        <div class="md:col-span-4 flex flex-col gap-2">
+                            <label for="motivoBloqueo" class="font-medium">Motivo de bloqueo:</label>
+                            <input type="text" id="motivoBloqueo" formControlName="motivoBloqueo" class="p-2 border border-gray-300 rounded" placeholder="Ej: Retornado de servicio">
+                        </div>
+                    </div>
+
+
+                    <!-- FILA 3 Periodo de remuneracion + Motivo + Motivo -->
+                    <div formArrayName="periodos">
+                        <div *ngFor="let pago of periodos.controls; let i = index" [formGroupName]="i" class="grid md:grid-cols-13 gap-4 mb-5 items-end">
+                        
+                            <!-- FECHA -->
+                            <div class="md:col-span-4 flex flex-col gap-1">
+                                <label class="font-medium">Periodo de remuneración</label>
+                                <input type="date" formControlName="periodoRemuneracion" class="p-2 border border-gray-300 rounded">
+                            </div>
+
+                            <!-- MOTIVO REMUNERACIÓN -->
+                            <div class="md:col-span-4 flex flex-col gap-1">
+                                <label class="font-medium">Motivo de remuneración:</label>
+                                <select formControlName="motivoPago" class="p-2 border border-gray-300 rounded">
+                                    <option value="" disabled selected>Seleccione un tipo</option>
+                                    <option *ngFor="let tipo of motivoPago" [value]="tipo.id">{{ tipo.nombre }}</option>
+                                </select>
+                            </div>
+
+                            <!-- MONTO -->
+                            <div class="md:col-span-4 flex flex-col gap-1">
+                                <label class="font-medium">Monto:</label>
+                                <input type="text" formControlName="montoRemuneracion" class="p-2 border border-gray-300 rounded" placeholder="Ej: 250.000">
+                            </div>
+
+                                <!-- BOTÓN ELIMINAR PERIODO -->
+                                <div class="md:col-span-1 flex justify-end items-center">
+                                    <button type="button" (click)="eliminarPago(i)" *ngIf="periodos.controls.length > 1"
+                                    class="text-sm py-2 px-2 text-white bg-red-500 hover:bg-red-600 rounded cursor-pointer transition-colors">
+                                    <mat-icon class="!text-lg">delete</mat-icon>
+                                    </button>
+                                </div>
+                        </div>
+
+                    </div>
+
+                        <!-- Botón agregar nuevo periodo -->
+                        <div class="flex justify-center">
+                            <button *ngIf="periodos.controls.length <= 2" type="button" (click)="agregarPeriodo()" class="flex items-center gap-2 px-4 py-2 bg-green-500 text-white hover:bg-green-600 cursor-pointer transition-colors rounded">
+                                <mat-icon> add_circle </mat-icon>
+                                Agregar otro periodo
+                            </button>
+                        </div>
+
+                    <!-- Observaciones -->
+                    <div class="flex flex-col gap-2">
+                        <label for="observacionesFuncionario" class="font-medium">Observaciones:</label>
+                        <textarea id="observacionesFuncionario" formControlName="observacionesFuncionario" rows="4" placeholder="Ingrese observaciones..." class="p-2 border border-gray-300 rounded"></textarea>
+                        
+                        <!-- VALIDACIONES -->
+                        <div *ngIf="analisisForm.get('observacionesFuncionario')?.invalid && (analisisForm.get('observacionesFuncionario')?.dirty || analisisForm.get('observacionesFuncionario')?.touched)" class="text-red-600 text-sm">
+                            <span *ngIf="analisisForm.get('observacionesFuncionario')?.errors?.['required']">Este campo es requerido</span>
+                            <span *ngIf="analisisForm.get('observacionesFuncionario')?.errors?.['minlength']">Mínimo 2 caracteres</span>
+                        </div>
+                    </div>
+
+                    <!-- Botones Formulario -->
+                    <div class="w-full justify-end flex gap-4 mt-4">
+
+                        <!-- LIMPIAR CAMPOS -->
+                        <button type="button" (click)="analisisForm.reset()" class="px-4 py-2 text-black bg-gray-100 hover:bg-gray-200 border-gray-300 border rounded cursor-pointer transition-colors">
+                            Limpiar campos
+                        </button>
+
+                        <!-- GUARDAR [disabled]="!analisisForm.valid" -->
+                        <button type="submit"  class="px-4 py-2 bg-green-500 text-white hover:bg-green-600  rounded cursor-pointer transition-colors">
+                            Guardar
+                        </button>
+
+                    </div>
+
+                
+                </div>
+
+
+                <!-- COLUMNA DERECHA -->
+                <div class="col-span-3 border-1">
+                    Generar una nota o imágen
+                </div>
+            </div>
+        
+        </form>
+
+    </div>
+</div>

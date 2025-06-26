@@ -1,0 +1,97 @@
+<div class="p-6 w-full max-w-4xl">
+  <!-- Título -->
+  <h2 class="text-xl font-semibold text-green-600 mb-6 flex items-center gap-2">
+    Editar información de fila seleccionada
+  </h2>
+
+  <!-- Formulario -->
+  <form [formGroup]="form" (ngSubmit)="guardar()" class="flex flex-col gap-6">
+
+    <!-- Grupo: Rut, Nombre, Grado -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium text-gray-700">RUT</label>
+        <input type="text" formControlName="rutFuncioario" class="p-2 border border-gray-300 rounded text-sm" />
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium text-gray-700">Nombre completo</label>
+        <input type="text" formControlName="nombreFuncionario" class="p-2 border border-gray-300 rounded text-sm" />
+      </div>
+      <div class="flex flex-col gap-1">
+        <label for="gradoFuncionario" class="text-sm font-medium text-gray-700">Grado</label>
+        <select id="gradoFuncionario" formControlName="gradoFuncionario" class=" p-2 border border-gray-300 rounded">
+          <option value="">Seleccione grado</option>
+          <option *ngFor="let grado of gradoFuncionario" [value]="grado.id">
+            {{ grado.nombre }}
+  </option>
+</select>
+
+      </div>
+    </div>
+
+    <!-- Grupo: Concepto, NCU, Motivo Bloqueo -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <!-- Concepto -->
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">Concepto</label>
+      <select formControlName="concepto" class="p-2 border border-gray-300 rounded text-sm">
+        <option value="">Seleccione concepto</option>
+        <option *ngFor="let c of conceptos" [value]="c">{{ c }}</option>
+      </select>
+    </div>
+
+      <!-- NCU -->
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium text-gray-700">N.C.U. DOE</label>
+        <input type="text" formControlName="ncuDOE" class="p-2 border border-gray-300 rounded text-sm" />
+      </div>
+      <!-- Motivo Bloqueo -->
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium text-gray-700">Motivo de bloqueo</label>
+        <input type="text" formControlName="motivoBloqueo" class="p-2 border border-gray-300 rounded text-sm" />
+      </div>
+    </div>
+
+
+    <div class="grid grid-cols-1 gap-6">
+      <!-- Periodo remuneración-->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium text-gray-700">Periodo de remuneración</label>
+          <input type="date" formControlName="periodoRemuneracion" class="p-2 border border-gray-300 rounded text-sm" />
+        </div>
+        <!-- Tipo remuneración -->
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium text-gray-700">Tipo remuneración</label>
+          <select formControlName="motivoPago" class="p-2 border border-gray-300 rounded text-sm">
+            <option value="">Seleccione tipo</option>
+            <option value="1° Línea">1° Línea</option>
+            <option value="2° Línea">2° Línea</option>
+            <option value="Renovación">Renovación</option>
+          </select>
+        </div>
+        <!-- Periodo -->
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium text-gray-700">Monto</label>
+          <input type="text" formControlName="montoRemuneracion" class="p-2 border border-gray-300 rounded text-sm" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Observaciones -->
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">Observaciones</label>
+      <textarea formControlName="observacionesFuncionario" rows="3" class="p-2 border border-gray-300 rounded text-sm" placeholder="Ingrese observaciones..."></textarea>
+    </div>
+
+    <!-- Botones -->
+    <div class="flex justify-end gap-3 pt-4">
+      <button type="button" mat-button (click)="cancelar()" class="px-4 py-2 text-black bg-gray-100 hover:bg-gray-200 border-gray-300 border rounded cursor-pointer transition-colors">
+        Cancelar
+      </button>
+      <button type="submit" mat-raised-button color="primary" class="px-4 py-2 bg-green-500 text-white hover:bg-green-600  rounded cursor-pointer transition-colors">
+        Guardar
+      </button>
+    </div>
+  </form>
+</div>

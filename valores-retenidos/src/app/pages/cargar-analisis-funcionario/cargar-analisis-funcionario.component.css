@@ -1,0 +1,6 @@
+/* Estilo encapsulado para tablas Excel */
+.excel-table th .mat-sort-header-container {
+  justify-content: center !important;
+}
+
+
