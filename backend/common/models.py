@@ -9,6 +9,19 @@ class Grado(models.Model):
 
     def __str__(self):
         return self.nombre_grado
+
+
+# --------------------------
+# MODELO: Rol
+# --------------------------
+class Rol(models.Model):
+    id_rol = models.AutoField(primary_key=True)
+    nombre_rol = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.nombre_rol
+
+
 # --------------------------
 # MODELO: Funcionario
 # --------------------------
@@ -17,12 +30,24 @@ class Funcionario(models.Model):
     nombre = models.CharField(max_length=100)
     grado = models.ForeignKey(Grado, on_delete=models.PROTECT, related_name='funcionarios')
     dotacion = models.CharField(max_length=50)
+    rol = models.ForeignKey(Rol, on_delete=models.PROTECT, related_name='funcionarios', null=True, blank=True)  # Nuevo
+    area_trabajo = models.CharField(
+        max_length=50,
+        choices=[
+            ('ANALISIS', 'Área de Análisis'),
+            ('CONTABILIDAD', 'Área de Contabilidad'),
+            ('PAGO', 'Área de Pago')
+        ],
+    	null=True,
+    	blank=True
+    )
 
     def __str__(self):
         return f"{self.rut} - {self.nombre}"
 
+
 # --------------------------
-# MODELO: Estados posibles del seguimiento
+# MODELO: Estado
 # --------------------------
 class Estado(models.Model):
     id_estado = models.AutoField(primary_key=True)
@@ -30,9 +55,10 @@ class Estado(models.Model):
 
     def __str__(self):
         return self.nombre
-    
+
+
 # --------------------------
-# MODELO: Concepto 
+# MODELO: Concepto
 # --------------------------
 class Concepto(models.Model):
     id_concepto = models.AutoField(primary_key=True)
@@ -40,9 +66,10 @@ class Concepto(models.Model):
 
     def __str__(self):
         return self.nombre_concepto
-    
+
+
 # --------------------------
-# MODELO: Reporte por funcionario
+# MODELO: ReporteFuncionario
 # --------------------------
 class ReporteFuncionario(models.Model):
     id_reporte_funcionario = models.AutoField(primary_key=True)
@@ -51,22 +78,23 @@ class ReporteFuncionario(models.Model):
     concepto = models.ForeignKey(Concepto, on_delete=models.PROTECT, related_name='reportes')
     ncu_doe = models.IntegerField()
     motivo_bloqueo = models.CharField(max_length=50)
-    observaciones = models.TextField()
-    estado_actual = models.ForeignKey(Estado, on_delete=models.PROTECT, null=True, blank=True) #nuevo
+    observaciones_analisis = models.TextField(blank=True, null=True)
+    estado_actual = models.ForeignKey(Estado, on_delete=models.PROTECT, null=True, blank=True)
 
     # CONTABILIDAD
-    nro_comprobante_contable = models.CharField(max_length=50, blank=True, null=True) #nuevo
-    observaciones_contabilidad = models.TextField(blank=True, null=True) #nuevo
+    nro_comprobante_contable = models.CharField(max_length=50, blank=True, null=True)
+    observaciones_contabilidad = models.TextField(blank=True, null=True)
 
     # PAGO
-    nro_nomina_pago = models.CharField(max_length=50, blank=True, null=True) #nuevo
-    observaciones_pago = models.TextField(blank=True, null=True) #nuevo
+    nro_nomina_pago = models.CharField(max_length=50, blank=True, null=True)
+    observaciones_pago = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"Reporte de {self.funcionario.nombre} ({self.funcionario.rut}) - {self.fecha_creacion}"
 
+
 # --------------------------
-# MODELO: Motivo de Pago 
+# MODELO: MotivoPago
 # --------------------------
 class MotivoPago(models.Model):
     id_motivopago = models.AutoField(primary_key=True)
@@ -75,20 +103,24 @@ class MotivoPago(models.Model):
     def __str__(self):
         return self.nombre_motivo_pago
 
+
 # --------------------------
-# MODELO: Seguimiento de estado por reporte
+# MODELO: SeguimientoUsuario
 # --------------------------
 class SeguimientoUsuario(models.Model):
     id_seguimiento_usuario = models.AutoField(primary_key=True)
     id_estado = models.ForeignKey(Estado, on_delete=models.PROTECT)
     id_reporte_funcionario = models.ForeignKey(ReporteFuncionario, on_delete=models.CASCADE, related_name='seguimientos')
+    usuario = models.ForeignKey(Funcionario, on_delete=models.PROTECT, related_name='acciones', null=True, blank=True)
     fecha_seguimiento = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Seguimiento #{self.id_seguimiento_usuario} - {self.id_estado.nombre}"
-    
+        return f"Seguimiento #{self.id_seguimiento_usuario} - {self.id_estado.nombre} por {self.usuario.rut}"
+
+
+
 # --------------------------
-# MODELO: Periodo de remuneración
+# MODELO: PeriodoRemuneracion
 # --------------------------
 class PeriodoRemuneracion(models.Model):
     id_periodo_remuneracion = models.AutoField(primary_key=True)
@@ -99,6 +131,3 @@ class PeriodoRemuneracion(models.Model):
 
     def __str__(self):
         return f"{self.periodo_remuneracion.strftime('%m/%Y')} - ${self.monto:,.0f}"
-
-
-

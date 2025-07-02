@@ -43,8 +43,8 @@ export class LayoutComponent {
   private routeGroups: Record<string, string[]> = {
     //ruta para ingreso funcionario, separarado por área
     analisis: ['/ingreso-analisis-funcionario','/cargar-analisis-funcionario','/listar-analisis-funcionario'],
-    contabilidad: [],
-    pagos: []
+    contabilidad: ['/contabilidad'],
+    pago: ['/pagos']
   };
 
   constructor(

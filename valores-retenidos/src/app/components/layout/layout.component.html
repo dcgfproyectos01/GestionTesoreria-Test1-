@@ -17,6 +17,7 @@
         <div class="font-bold text-amber-400 text-lg uppercase">Valores Retenidos</div>
       </div>
     </div>
+
     <!-- MENU SIDENAV LEFT-VERTICAL -->
     <nav class="flex flex-col p-4 space-y-2 text-gray-800 dark:text-gray-100 text-xs">
       <!-- Inicio -->
@@ -24,12 +25,6 @@
         <mat-icon>home</mat-icon> <!-- Icono de google https://fonts.google.com/icons?selected=Material+Symbols+Outlined:start:FILL@0;wght@400;GRAD@0;opsz@24&icon.size=24&icon.color=%23e3e3e3 -->
         <span>Inicio</span>
       </a>
-
-
-
-
-
-
 
       <!-- Área de ANÁLISIS -->
       <!-- Botón Área de análisis, hace referencia a si se ejecuta el despliege y por lo tanto, mostrar los enlaces que contiene -->
@@ -39,7 +34,7 @@
           'bg-green-500 text-gray-100': isGroupActive('analisis')
         }" class="cursor-pointer p-2 rounded flex items-center gap-2 select-none">
         <mat-icon>find_in_page</mat-icon>
-        <span>Área de análisis</span>
+        <span>Área de Análisis</span>
       </a>
 
       <!-- DIV con tres módulos (carga masiva - ingreso manual - listado ) -->
@@ -65,11 +60,6 @@
         </a>
       </div>
 
-
-
-
-
-
       <!-- Área de CONTABILIDAD -->
       <!-- Botón Área de contabilidad, hace referencia a si se ejecuta el despliege y por lo tanto, mostrar los enlaces que contiene -->
       <a (click)="isContabilidadExpanded = !isContabilidadExpanded"
@@ -78,7 +68,7 @@
           'bg-green-500 text-gray-100': isGroupActive('contabilidad')
         }" class="cursor-pointer p-2 rounded flex items-center gap-2 select-none">
         <mat-icon> calculate </mat-icon>
-        <span> Área de contabilidad </span>
+        <span> Área de Contabilidad </span>
       </a>
 
       <!-- DIV con un módulo (listado) -->
@@ -89,24 +79,35 @@
         }" class="pl-8 flex flex-col gap-1">
 
         <!--Módulo de listado -->
-        <a routerLink="/contabilidad" routerLinkActive="bg-green-500 text-gray-100" [routerLinkActiveOptions]="{ exact: true }" class="p-2 rounded flex items-center gap-2 transition-colors" [ngClass]="{'hover:bg-gray-200 dark:hover:bg-gray-500': !isActive('/contabilidad')}">
-          <span>Contabilidad</span>
+        <a routerLink="/contabilidad" class="p-2 rounded flex items-center gap-2 transition-colors" routerLink="/contabilidad" routerLinkActive="font-medium" [ngClass]="{'hover:bg-gray-200 dark:hover:bg-gray-500': !isActive('/contabilidad')}">
+          <span>Listado para Contabilidad</span>
         </a>
       </div>
 
-
-
-
-
-
-
-
-
-      <!-- Pagos -->
-      <a routerLink="/pagos" routerLinkActive="bg-green-500 text-gray-100" [routerLinkActiveOptions]="{ exact: true }" class="p-2 rounded flex items-center gap-2 transition-colors" [ngClass]="{'hover:bg-gray-200 dark:hover:bg-gray-500': !isActive('/pagos')}">
-        <mat-icon>paid</mat-icon> 
-        <span>Pagos</span>
+      <!-- Área de PAGO -->
+      <!-- Botón Área de pago, hace referencia a si se ejecuta el despliege y por lo tanto, mostrar los enlaces que contiene -->
+      <a (click)="isPagoExpanded = !isPagoExpanded"
+        [ngClass]="{
+          'hover:bg-gray-200 dark:hover:bg-gray-500': !isGroupActive('pago'),
+          'bg-green-500 text-gray-100': isGroupActive('pago')
+        }" class="cursor-pointer p-2 rounded flex items-center gap-2 select-none">
+        <mat-icon> paid </mat-icon>
+        <span> Área de pago </span>
       </a>
+
+      <!-- DIV con un módulo (listado) -->
+      <div [@expandCollapse]="isPagoExpanded ? 'expanded' : 'collapsed'"
+        [ngClass]="{
+          'pointer-events-none overflow-hidden': !isPagoExpanded,
+          'pointer-events-auto overflow-visible': isPagoExpanded
+        }" class="pl-8 flex flex-col gap-1">
+
+        <!--Módulo de listado -->
+        <a routerLink="/pagos" class="p-2 rounded flex items-center gap-2 transition-colors" routerLink="/pagos" routerLinkActive="font-medium" [ngClass]="{'hover:bg-gray-200 dark:hover:bg-gray-500': !isActive('/pagos')}">
+          <span>Listado para Pago</span>
+        </a>
+      </div>
+
       <!-- Reportabilidad -->
       <a routerLink="/reportabilidad" routerLinkActive="bg-green-500 text-gray-100" [routerLinkActiveOptions]="{ exact: true }" class="p-2 rounded flex items-center gap-2 transition-colors" [ngClass]="{'hover:bg-gray-200 dark:hover:bg-gray-500': !isActive('/reportabilidad')}">
         <mat-icon>bar_chart</mat-icon> 

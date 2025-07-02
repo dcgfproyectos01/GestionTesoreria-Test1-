@@ -38,4 +38,9 @@ export class IngresoFuncionarioService {
   eliminarIngreso(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}${id}/`);
   }
+
+  actualizarIngreso(id: number, data: any): Observable<any> {
+  return this.http.patch(`/api/common/ingresos/${id}/`, data);
+}
+
 }
