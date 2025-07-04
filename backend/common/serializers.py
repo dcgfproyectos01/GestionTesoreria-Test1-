@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Funcionario, ReporteFuncionario, PeriodoRemuneracion, Estado, SeguimientoUsuario, Concepto, MotivoPago, Grado
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from .models import Funcionario, ReporteFuncionario, PeriodoRemuneracion, Estado, SeguimientoUsuario, Concepto, MotivoPago, Grado, PerfilUsuario
 
 
 #CONCEPTO 
@@ -58,7 +59,7 @@ class ReporteFuncionarioSerializer(serializers.ModelSerializer):
             'concepto_nombre',       # nombre para mostrar
             'ncu_doe',
             'motivo_bloqueo',
-            'observaciones',
+            'observaciones_analisis',
             'estado_actual',         # viene como id
             'estado_nombre',         # nombre para mostrar
             'nro_comprobante_contable',
@@ -103,6 +104,31 @@ class ReporteFuncionarioSerializer(serializers.ModelSerializer):
 
 #MOTIVO PAGO
 class MotivoPagoSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = MotivoPago
         fields = ['id_motivopago', 'nombre_motivo_pago']
+
+#TOKEN LOGIN
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Intentar obtener el perfil
+        perfil = PerfilUsuario.objects.select_related('funcionario__rol').filter(user=user).first()
+
+        if perfil and perfil.funcionario:
+            funcionario = perfil.funcionario
+            token['rut'] = funcionario.rut
+            token['nombre'] = funcionario.nombre
+            token['rol'] = funcionario.rol.nombre_rol if funcionario.rol else ''
+            token['area_trabajo'] = funcionario.area_trabajo or ''
+        else:
+            # Si no hay perfil asociado, dejar campos vacíos
+            token['rut'] = ''
+            token['nombre'] = ''
+            token['rol'] = ''
+            token['area_trabajo'] = ''
+
+        return token

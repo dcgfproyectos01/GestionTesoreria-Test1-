@@ -1,9 +1,9 @@
 from .models import ReporteFuncionario, Grado, Concepto, MotivoPago
-from .serializers import ReporteFuncionarioSerializer, GradoSerializer, ConceptoSerializer, MotivoPagoSerializer
+from .serializers import ReporteFuncionarioSerializer, GradoSerializer, ConceptoSerializer, MotivoPagoSerializer, CustomTokenObtainPairSerializer
 from rest_framework import viewsets, status, generics
 from rest_framework.response import Response
 from rest_framework.decorators import action
-
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 import logging
 
@@ -50,3 +50,7 @@ class ConceptoListAPIView(generics.ListAPIView):
 class MotivoPagoListAPIView(generics.ListAPIView):
     queryset = MotivoPago.objects.all().order_by('id_motivopago')
     serializer_class = MotivoPagoSerializer
+
+#TOKEN LOGIN
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
