@@ -1,0 +1,250 @@
+<div class="w-full md:col-span-2 p-6 sm:p-8 bg-white rounded-lg shadow-md text-sm"> 
+
+  <div class="!text-green-600 mb-10 w-fit rounded flex gap-3 !text-xl items-center">
+    <mat-icon> groups_2 </mat-icon>
+    <h2 class="font-semibold "> Mantenedor de Usuarios y Perfiles </h2> 
+  </div>
+
+  <!-- Buscador -->
+
+  <h3 class="text-green-600 font-semibold text-lg">Buscar funcionario</h3>
+  <div class="w-full flex flex-wrap items-center gap-3 mb-12 overflow-x-auto !bg-gray-50 dark:!bg-gray-900 !w-fit p-3 shadow rounded">
+    <input type="text" [(ngModel)]="valorBusqueda" (input)="formatearRut()"  placeholder="Ingrese rut del funcionario..." class="border border-gray-300 rounded-md px-4 py-2 w-full sm:w-auto min-w-[280px] text-sm focus:outline-none focus:ring-2 focus:ring-green-500"/>
+    
+    <button (click)="buscarFuncionario()" class="bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded-md flex items-center gap-1">
+      <mat-icon>search</mat-icon>
+      <span class="hidden sm:inline font-medium">Buscar</span>
+    </button>
+  </div>
+
+
+
+  <!-- Resultado búsqueda -->
+<div *ngIf="funcionarioNoEncontrado" class="mb-6 p-4 border-l-4 border-yellow-500 bg-yellow-50 text-yellow-900 rounded flex items-start space-x-2">
+  <!-- Columna del ícono -->
+  <div class="">
+    <mat-icon class="text-yellow-600">warning</mat-icon>
+  </div>
+
+  <!-- Columna del texto -->
+  <div>
+    <p class="font-semibold mb-2 mt-0.5">Funcionario no encontrado.</p>
+    <p class="text-sm">Puedes registrarlo manualmente a continuación:</p>
+  </div>
+</div>
+
+
+<!-- Funcionario encontrado y editable -->
+<div *ngIf="funcionarioEncontrado" class="mb-6 p-4 border-l-4 border-green-500  text-green-900 rounded">
+  <form [formGroup]="formEditarFuncionario" (ngSubmit)="guardarCambiosFuncionario()" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+    <div class="col-span-full">
+      <p class="font-semibold text-green-700 text-sm mb-3">Funcionario encontrado, puedes editar los siguientes datos:</p>
+    </div>
+
+    <!-- RUT (solo lectura) -->
+    <div class="flex flex-col">
+      <label for="rut" class="text-sm font-medium text-gray-700">RUT</label>
+      <input id="rut" type="text" formControlName="rut" readonly class="bg-gray-100 cursor-not-allowed border border-gray-300 rounded-md px-3 py-2 text-sm" />
+    </div>
+
+    <!-- Nombre (solo lectura) -->
+    <div class="flex flex-col">
+      <label for="nombre" class="text-sm font-medium text-gray-700">Nombre</label>
+      <input id="nombre" type="text" formControlName="nombre" readonly class="bg-gray-100 cursor-not-allowed border border-gray-300 rounded-md px-3 py-2 text-sm" />
+    </div>
+
+    <!-- Rol -->
+    <div class="flex flex-col">
+      <label for="rol" class="text-sm font-medium text-gray-700">Rol</label>
+      <select id="rol" formControlName="rol" class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+        <option *ngFor="let rol of roles" [value]="rol.id">{{ rol.nombre }}</option>
+      </select>
+    </div>
+
+    <!-- Área de trabajo -->
+    <div class="flex flex-col">
+      <label for="area_trabajo" class="text-sm font-medium text-gray-700">Área de trabajo</label>
+      <select id="area_trabajo" formControlName="area_trabajo" class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+        <option *ngFor="let area of areas" [value]="area">{{ area }}</option>
+      </select>
+    </div>
+
+
+    
+    <!-- Botones: Guardar y Eliminar -->
+    <div class="col-span-full flex justify-between flex-wrap gap-2 sm:justify-end">
+    <!-- Botón eliminar -->
+    <button type="button" (click)="eliminarFuncionario()" class="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded-md flex items-center gap-1">
+        <mat-icon>delete</mat-icon>
+        <span>Eliminar</span>
+    </button>
+
+    <!-- Botón guardar -->
+    <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-md flex items-center gap-1">
+        <mat-icon>save</mat-icon>
+        <span>Guardar Cambios</span>
+    </button>
+    </div>
+
+
+  </form>
+</div>
+
+
+
+<!-- Formulario de ingreso manual -->
+<form *ngIf="funcionarioNoEncontrado" (ngSubmit)="guardarNuevoFuncionario()" [formGroup]="formFuncionario" class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
+
+  <!-- RUT -->
+  <div class="flex flex-col">
+    <label for="rut" class="text-sm font-medium text-gray-700">RUT</label>
+    <input id="rut" type="text" formControlName="rut" class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+  </div>
+
+  <!-- Nombre -->
+  <div class="flex flex-col">
+    <label for="nombre" class="text-sm font-medium text-gray-700">Nombre</label>
+    <input id="nombre" type="text" formControlName="nombre" class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+  </div>
+
+  <!-- Rol (select) -->
+  <div class="flex flex-col">
+    <label for="rol" class="text-sm font-medium text-gray-700">Rol</label>
+    <select id="rol" formControlName="rol" class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+      <option *ngFor="let rol of roles" [value]="rol.id">{{ rol.nombre }}</option>
+    </select>
+  </div>
+
+  <!-- Área de trabajo (select) -->
+  <div class="flex flex-col">
+    <label for="area_trabajo" class="text-sm font-medium text-gray-700">Área de trabajo</label>
+    <select id="area_trabajo" formControlName="area_trabajo" class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+      <option value="Análisis">Análisis</option>
+      <option value="Contabilidad">Contabilidad</option>
+      <option value="Pago">Pago</option>
+    </select>
+  </div>
+
+  <!-- Botón guardar -->
+  <div class="col-span-full flex justify-end">
+    <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-md flex items-center gap-1">
+      <mat-icon>person_add</mat-icon>
+      <span>Añadir Funcionario</span>
+    </button>
+  </div>
+
+</form>
+
+
+  <!-- Espacio para registrar nuevo funcionario -->
+  <!-- <h3 class="text-green-600 font-semibold text-lg">Añadir nuevo funcionario</h3>
+  <form action="">
+    <div>Usuario</div>
+        <input type="text" class="border">
+    <div>Contraseña</div>
+        <input type="password" name="" id="" class="border">
+    <button type="submit" class="border">Enviar</button>
+  </form> -->
+
+<!-- </div> -->
+
+
+  <!-- Tabla -->
+
+  <!-- <div class="w-full overflow-x-auto !bg-white dark:!bg-gray-900 ">
+    <table mat-table [dataSource]="dataSource" matSort class=" mat-elevation-z8 w-full dark:!text-gray-100 !border-none !bg-white "> -->
+
+      <!-- Todas las columnas de Analisis + Pago -->
+       
+      <!-- <ng-container matColumnDef="fechaCreacion">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="!font-bold !text-sm !bg-green-500 !text-white rounded-l-md"> Fecha Creación </th>
+        <td mat-cell *matCellDef="let element" class="text-gray-800 !text-sm truncate"> {{element.fechaCreacion | date:'dd/MM/yyyy'}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="rutFuncioario">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="!font-bold !text-sm !bg-green-500 !text-white"> RUT </th>
+        <td mat-cell *matCellDef="let element" class="text-gray-800 !text-sm truncate"> {{element.rutFuncioario}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="nombreFuncionario">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="!font-bold !text-sm !bg-green-500 !text-white"> Nombre </th>
+        <td mat-cell *matCellDef="let element" class="text-gray-800 !text-sm truncate"> {{element.nombreFuncionario}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="gradoFuncionario">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="!font-bold !text-sm !bg-green-500 !text-white"> Grado </th>
+        <td mat-cell *matCellDef="let element" class="text-gray-800 !text-sm truncate"> {{element.gradoFuncionario}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="concepto">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="!font-bold !text-sm !bg-green-500 !text-white"> Concepto </th>
+        <td mat-cell *matCellDef="let element" class="text-gray-800 !text-sm truncate"> {{element.concepto}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="periodoRemuneracion">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="!font-bold !text-sm !bg-green-500 !text-white"> Periodo remuneración </th>
+        <td mat-cell *matCellDef="let element" class="text-gray-800 !text-sm truncate"> {{element.periodoRemuneracion | date:'MM/yyyy'}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="motivoPago">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="!font-bold !text-sm !bg-green-500 !text-white"> Motivo de Pago </th>
+        <td mat-cell *matCellDef="let element" class="text-gray-800 !text-sm truncate"> {{element.motivoPago}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="montoRemuneracion">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="!font-bold !text-sm !bg-green-500 !text-white"> Monto </th>
+        <td mat-cell *matCellDef="let element" class="text-gray-800 !text-sm truncate"> {{element.montoRemuneracion | currency:'':'':'1.0-0'}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="motivoBloqueo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="!font-bold !text-sm !bg-green-500 !text-white"> Motivo Bloqueo </th>
+        <td mat-cell *matCellDef="let element" class="text-gray-800 !text-sm truncate"> {{element.motivoBloqueo}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="ncuDOE">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="!font-bold !text-sm !bg-green-500 !text-white"> NCU DOE </th>
+        <td mat-cell *matCellDef="let element" class="text-gray-800 !text-sm truncate"> {{element.ncuDOE}} </td>
+      </ng-container> -->
+
+      <!-- Campos adicionales Pago -->
+
+      <!-- <ng-container matColumnDef="nroNominaPago">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="!font-bold !text-sm !bg-green-500 !text-white"> N° Nómina </th>
+        <td mat-cell *matCellDef="let element" class="text-gray-800 !text-sm truncate"> {{element.nroNominaPago || '---'}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="observacionesPago">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="!font-bold !text-sm !bg-green-500 !text-white"> Observaciones Pago </th>
+        <td mat-cell *matCellDef="let element" class="text-gray-800 !text-sm truncate"> {{element.observacionesPago || '---'}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="estado">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="!font-bold !text-sm !bg-green-500 !text-white"> Estado </th>
+        <td mat-cell *matCellDef="let element" class="text-yellow-700 !text-sm truncate"> {{element.estado}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef class="!font-bold !text-sm !bg-green-500 !text-white rounded-r-md"> Acciones </th>
+        <td mat-cell *matCellDef="let element" class="my-1.5 w-full text-white flex rounded-r-md">
+          <button (click)="editarRegistro(element)" class="bg-amber-400 hover:bg-yellow-400 transition-colors cursor-pointer px-1.5 rounded-l-md">
+            <mat-icon class="!text-lg">edit</mat-icon>
+          </button>
+          <button (click)="eliminarRegistro(element)" class="bg-red-500 hover:bg-red-600 transition-colors cursor-pointer px-1.5 rounded-r-md">
+            <mat-icon class="!text-lg">delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="!bg-gray-100 dark:!bg-gray-800 !text-gray-900 dark:!text-gray-100"></tr>
+
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="12">No hay datos que coincidan con "{{valorBusqueda}}"</td>
+      </tr>
+    </table>
+
+    <mat-paginator class="!bg-white" [pageSizeOptions]="[5,10,25]" showFirstLastButtons></mat-paginator>
+  </div> -->
+
+</div>

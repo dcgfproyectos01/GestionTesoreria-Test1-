@@ -1,0 +1,17 @@
+.snackbar-success {
+  background-color: #16a34a; /* verde */
+  color: white;
+  font-weight: 500;
+}
+
+.snackbar-error {
+  background-color: #dc2626; /* rojo */
+  color: white;
+  font-weight: 500;
+}
+
+.input-error {
+  color: #dc2626; /* rojo-600 */
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}

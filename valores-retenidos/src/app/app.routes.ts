@@ -8,6 +8,7 @@ import { ContabilidadComponent } from './pages/contabilidad/contabilidad.compone
 import { ReportabilidadComponent } from './pages/reportabilidad/reportabilidad.component';
 import { ListarAnalisisFuncionarioComponent } from './pages/listar-analisis-funcionario/listar-analisis-funcionario.component';
 import { CargarAnalisisFuncionarioComponent } from './pages/cargar-analisis-funcionario/cargar-analisis-funcionario.component';
+import { MantenedorComponent } from './pages/mantenedor/mantenedor.component';
 
 
 export const routes: Routes = [
@@ -21,6 +22,7 @@ export const routes: Routes = [
             { path: 'listar-analisis-funcionario', component: ListarAnalisisFuncionarioComponent},
             { path: 'contabilidad', component: ContabilidadComponent},
             { path: 'pagos', component: PagosComponent},
+            { path: 'mantenedor', component: MantenedorComponent},
             { path: 'reportabilidad', component: ReportabilidadComponent}
         ]
     },

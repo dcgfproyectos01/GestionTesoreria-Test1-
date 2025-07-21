@@ -13,6 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { FormsModule } from '@angular/forms';
 import { IngresoFuncionarioService } from '../../services/ingreso-funcionario.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-listar-analisis-funcionario',
@@ -49,10 +50,14 @@ export class ListarAnalisisFuncionarioComponent implements OnInit, AfterViewInit
     'ncuDOE',
     'observaciones',
     'estado',
-    'acciones'
+    'acciones' // ✅ solo para tabla principal
   ];
 
   dataSource = new MatTableDataSource<any>([]);
+
+  //////////SIMULADO//////////
+  displayedColumnsSinAcciones: string[] = this.displayedColumns.filter(col => col !== 'acciones');
+  //////////SIMULADO//////////
 
   gradoFuncionario = [
     { id: 1, nombre: '1. General Director' },
@@ -74,14 +79,28 @@ export class ListarAnalisisFuncionarioComponent implements OnInit, AfterViewInit
     { id: 17, nombre: '17. Carabinero' },
     { id: 18, nombre: '18. Sin grado' },
   ];
+  
+  funcionariosEnviados = new MatTableDataSource<any>([]);
+
 
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+  
+  //////////SIMULADO//////////
+  @ViewChild('sortPrincipal') sortPrincipal!: MatSort;
+  @ViewChild('sortSecundario') sortSecundario!: MatSort;
+  
 
-  constructor(private ingresoService: IngresoFuncionarioService) {}
+  //////////SIMULADO//////////
+
+  constructor(
+    private ingresoService: IngresoFuncionarioService,
+    private snackBar: MatSnackBar,
+  ) {}
 
   ngOnInit(): void {
+    
     this.ingresoService.obtenerIngresos().subscribe({
       next: (data: any[]) => {
         const registrosPlano: any[] = [];
@@ -107,7 +126,43 @@ export class ListarAnalisisFuncionarioComponent implements OnInit, AfterViewInit
         });
 
         this.dataSource.data = registrosPlano;
-      },
+        //////////SIMULADO//////////
+        const mockFuncionarios = [
+          {
+            idIngreso: 999,
+            fechaCreacion: new Date(),
+            rutFuncioario: '12345678-9',
+            nombreFuncionario: 'Juan Pérez',
+            gradoFuncionario: '9. Capitán',
+            concepto: 'Sueldo',
+            periodoRemuneracion: '2025-06-01',
+            motivoPago: 'Retornado de servicio',
+            montoRemuneracion: 550000,
+            motivoBloqueo: 'Retornado de servicio',
+            ncuDOE: '951753852',
+            observaciones: 'Todo en orden',
+            estado: 'Por enviar'
+          },
+          {
+            idIngreso: 998,
+            fechaCreacion: new Date(),
+            rutFuncioario: '98765432-1',
+            nombreFuncionario: 'Ana Soto',
+            gradoFuncionario: '13. Sargento 1°',
+            concepto: 'Reintegro',
+            periodoRemuneracion: '2025-06-01',
+            motivoPago: '',
+            montoRemuneracion: "",
+            motivoBloqueo: '',
+            ncuDOE: '',
+            observaciones: '',
+            estado: 'Pendiente'
+          }
+        ];
+
+        this.dataSource.data = mockFuncionarios;
+        
+      },  //////////SIMULADO//////////
       error: err => {
         console.error('Error al obtener ingresos:', err);
       }
@@ -116,8 +171,14 @@ export class ListarAnalisisFuncionarioComponent implements OnInit, AfterViewInit
   }
 
   ngAfterViewInit() {
+    // this.dataSource.paginator = this.paginator;   ORIGINAL
+    // this.dataSource.sort = this.sort;             ORIGINAL
+
+    //////////SIMULADO//////////
     this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    this.dataSource.sort = this.sortPrincipal;
+    this.funcionariosEnviados.sort = this.sortSecundario;
+    //////////SIMULADO//////////
   }
 
   aplicarFiltroManual(event: Event) {
@@ -161,4 +222,41 @@ export class ListarAnalisisFuncionarioComponent implements OnInit, AfterViewInit
       });
     }
   }
+
+  //////////SIMULADO//////////
+  registroCompleto(element: any): boolean {
+    return element.rutFuncioario && element.nombreFuncionario && element.gradoFuncionario &&
+          element.concepto && element.periodoRemuneracion && element.motivoPago &&
+          element.montoRemuneracion != null && element.estado === 'Por enviar';
+  }
+
+  //////////SIMULADO//////////
+enviarAContabilidad(element: any): void {
+  const confirmado = confirm(`¿Estás seguro que deseas enviar al funcionario "${element.nombreFuncionario}" a Contabilidad?`);
+
+  if (!confirmado) return;
+
+  // Actualizamos el estado del funcionario a 'Enviado'
+  const funcionarioEnviado = { ...element, estado: 'Enviado' };
+
+  // Añadir a la segunda tabla (Contabilidad)
+  this.funcionariosEnviados.data = [...this.funcionariosEnviados.data, funcionarioEnviado];
+
+  // Eliminar de la tabla principal
+  this.dataSource.data = this.dataSource.data.filter(f => f.idIngreso !== element.idIngreso);
+
+  // Mostrar notificación
+  this.snackBar.open(`Funcionario "${element.nombreFuncionario}" enviado a Contabilidad.`, 'Cerrar', {
+    duration: 3500,
+    horizontalPosition: 'end',
+    verticalPosition: 'bottom',
+    panelClass: ['snackbar-success'] // Puedes definir esta clase en tu CSS si deseas personalizarla
+  });
+}
+
+
+
+
+
+
 }

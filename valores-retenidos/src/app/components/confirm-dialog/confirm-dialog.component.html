@@ -1,0 +1,11 @@
+<div class="p-6 text-center">
+  <mat-icon class="text-yellow-600 text-4xl mb-2">help</mat-icon>
+  <h2 class="text-lg font-semibold mb-2 text-gray-800">{{ data.mensaje }}</h2>
+
+  <div class="flex justify-center gap-4 mt-6">
+    <button mat-button (click)="cerrar(false)" class="text-gray-600 hover:text-gray-800">Cancelar</button>
+    <button mat-flat-button color="primary" (click)="cerrar(true)" class="bg-green-600 text-white hover:bg-green-700">
+      Confirmar
+    </button>
+  </div>
+</div>

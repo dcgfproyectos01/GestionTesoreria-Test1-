@@ -29,6 +29,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './pagos.component.html',
   styleUrls: ['./pagos.component.css']
 })
+
 export class PagosComponent implements OnInit, AfterViewInit {
 
   valorBusqueda = '';
