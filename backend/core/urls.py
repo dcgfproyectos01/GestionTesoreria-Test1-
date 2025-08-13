@@ -22,5 +22,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/common/', include('common.urls')),  # <-- conecta tu app aquí
+    path('api/valores_retenidos/', include('valores_retenidos.urls')),  # <-- VALORES RETENIDOS
+    #path('api/desahucio/', include('desahucio.urls')),  # <-- DESAHUCIO
 ]

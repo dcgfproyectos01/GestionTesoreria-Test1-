@@ -16,7 +16,7 @@ export const routes: Routes = [
         path: '',
         component: LayoutComponent,
         children: [
-            { path: '', component: HomeComponent },
+            { path: '', component: HomeComponent }, //can active
             { path: 'ingreso-analisis-funcionario', component: IngresoAnalisisFuncionarioComponent},
             { path: 'cargar-analisis-funcionario', component: CargarAnalisisFuncionarioComponent},
             { path: 'listar-analisis-funcionario', component: ListarAnalisisFuncionarioComponent},

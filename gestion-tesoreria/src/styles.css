@@ -1,0 +1,129 @@
+/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+html, body {
+  height: 100%;
+  scroll-behavior: smooth;
+
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+:root {
+  --color-bg: #e5e7eb ;      /* Tailwind gray-200 */
+  --color-text: #ffffff;     /* Tailwind white */
+  --color-hover: #1e2939 ;    /* Tailwind gray-700 */
+}
+
+/* Estilos para el tema oscuro del paginator */
+html.dark .mat-mdc-paginator {
+  color: #f3f4f6;
+}
+
+html.dark .mat-mdc-paginator .mat-mdc-paginator-page-size-label,
+html.dark .mat-mdc-paginator .mat-mdc-select-value-text,
+html.dark .mat-mdc-paginator .mat-mdc-paginator-range-label {
+  color: #f3f4f6 !important;
+}
+
+html.dark .mat-mdc-paginator .mat-mdc-select-arrow svg path {
+  fill: #f3f4f6 !important;
+}
+
+html.dark .mat-mdc-paginator .mat-mdc-paginator-icon path {
+  fill: #f3f4f6 !important;
+}
+
+html.dark .mat-mdc-paginator .mdc-notched-outline__leading,
+html.dark .mat-mdc-paginator .mdc-notched-outline__trailing,
+html.dark .mat-mdc-paginator .mdc-notched-outline__notch {
+  border-color: #9ca3af !important;
+}
+
+html.dark .mat-mdc-select-panel {
+  background-color: #1e2939 !important;
+}
+
+html.dark .mat-mdc-option .mdc-list-item__primary-text {
+  color: #f3f4f6 !important;
+}
+
+html.dark .mat-mdc-option.mdc-list-item--selected {
+  background-color: #4b5563 !important;
+}
+
+html.dark .mat-mdc-option.mdc-list-item--selected .mdc-list-item__primary-text {
+  color: #f3f4f6 !important;
+}
+
+html.dark .mat-mdc-option:hover {
+  background-color: #4b5563 !important;
+}
+
+/* Estilos los Datatable */
+html .mat-sort-header-arrow {
+  color: white !important;
+}
+
+html .mat-mdc-table {
+  border-collapse: separate;
+  border-spacing: 0 15px;
+}
+
+html .mat-mdc-cell {
+  border: none;
+}
+
+html .mat-mdc-header-cell {
+  border: none;
+}
+
+/* Estilo que hace invisible el scrollbar */
+html .mat-drawer-inner-container {
+  overflow-y: overlay;
+  scrollbar-width: none;
+}
+
+html .mat-mdc-header-cell {
+  font-size: 17px; /* tamaño encabezado */
+}
+
+html .mat-mdc-cell {
+  font-size: 15px; /* tamaño celdas */
+}
+
+html .mat-mdc-header-row {
+  height: 2.5rem;
+}
+
+html .mat-mdc-row {
+  height: 2.5rem;
+}
+
+html .mat-mdc-footer-row {
+  height: 2.5rem;
+}
+
+/* Hace más pequeño el input toggle */
+html .scale-toggle {
+  transform: scale(0.8);
+  transform-origin: center;
+}
+
+/* Estilo global para centrar contenido en encabezados de tabla */
+.mat-sort-header-container {
+  justify-content: center !important;
+}
+
+/* Estilo global para centrar contenido de filas de tabla */
+html .mat-mdc-cell {
+  text-align: center;
+}
+
+
+
+

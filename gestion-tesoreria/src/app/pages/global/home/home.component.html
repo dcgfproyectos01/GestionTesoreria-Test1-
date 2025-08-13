@@ -1,0 +1,24 @@
+<div class="grid sm:grid-cols-12 gap-4">
+  <div class="md:col-span-6 w-full p-6 bg-white rounded-lg shadow-md text-sm border-1">
+    <h2 class="font-bold mb-2">Datos del Usuario (Autentificatic)</h2>
+    <ng-container *ngIf="currentUser">
+      <ng-container *ngIf="currentUser">
+        <p><strong>Nombre:</strong> {{ currentUser.primer_nombre }} {{currentUser.apellido_paterno}}</p>
+        <p><strong>RUT:</strong> {{ currentUser.rut }}</p>
+        <p><strong>Grado:</strong> {{ currentUser.grado }}</p>
+        <p><strong>Dotación:</strong> {{ currentUser.dotacion }}</p>
+      </ng-container>
+    </ng-container>
+    <ng-container *ngIf="!currentUser">
+      <p>No se ha cargado información del usuario.</p>
+    </ng-container>
+  </div>
+
+  <div class="md:col-span-6 w-full p-6 bg-white rounded-lg shadow-md text-sm border-1">
+    2
+  </div>
+</div>
+
+<div class="mt-4 w-full p-6 bg-white rounded-lg shadow-md text-sm border-1">
+  3
+</div>

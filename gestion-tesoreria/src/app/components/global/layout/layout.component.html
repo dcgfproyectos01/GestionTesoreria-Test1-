@@ -1,0 +1,185 @@
+<!-- <p class="text-red-500">layout works!</p>
+<p class="text-9xl">layout works!</p>
+<p class="font-extrabold">layout works!</p>
+<p class="mb-10">layout works!</p>
+<p class="mx-2.5">layout works!</p>
+<p class="my-1.5">layout works!</p> -->
+ 
+<!-- SIDENAV LEFT-VERTICAL -->
+<mat-sidenav-container class="h-screen !bg-white dark:!bg-gray-900" autosize>
+  <mat-sidenav #sidenav [mode]="sidenavMode" class="!w-2xs !rounded-none !bg-white dark:!bg-gray-900">
+    <!-- LOGO -->
+    <div class="grid grid-cols-10 gap-2 mt-3">
+      <div class="col-span-2 p-2">
+        <img src="assets/img/logo_difincar.png" alt="logo_difincar" class="w-full" />
+      </div>
+      <div class="col-span-8 flex items-center justify-start">
+        <div class="font-bold text-amber-400 text-lg uppercase">Valores Retenidos</div>
+      </div>
+    </div>
+
+    <!-- MENU SIDENAV LEFT-VERTICAL -->
+    <nav #sidenavScrollRef class="flex flex-col p-4 space-y-3 text-gray-800 dark:text-gray-100 text-xs">
+      <!-- Inicio -->
+      <a routerLink="/" (click)="closeSidebarIsMobile()" routerLinkActive="bg-green-500 text-gray-100" [routerLinkActiveOptions]="{ exact: true }" class="p-2 rounded flex items-center gap-2 transition-colors" [ngClass]="{'hover:bg-gray-200 dark:hover:bg-gray-500': !isActive('/')}">
+        <mat-icon>home</mat-icon> <!-- Icono de google https://fonts.google.com/icons?selected=Material+Symbols+Outlined:start:FILL@0;wght@400;GRAD@0;opsz@24&icon.size=24&icon.color=%23e3e3e3 -->
+        <span>Inicio</span>
+      </a>
+
+      <!-- Área de ANÁLISIS -->
+      <!-- Botón Área de análisis, hace referencia a si se ejecuta el despliege y por lo tanto, mostrar los enlaces que contiene -->
+      <a (click)="isAnalisisExpanded = !isAnalisisExpanded" 
+        [ngClass]="{
+          'hover:bg-gray-200 dark:hover:bg-gray-500': !isGroupActive('analisis'),
+          'bg-green-500 text-gray-100': isGroupActive('analisis')
+        }" class="cursor-pointer p-2 rounded flex items-center gap-2 select-none">
+        <mat-icon>find_in_page</mat-icon>
+        <span>Área de Análisis</span>
+      </a>
+
+      <!-- DIV con tres módulos (carga masiva - ingreso manual - listado ) -->
+      <div [@expandCollapse]="isAnalisisExpanded ? 'expanded' : 'collapsed'"
+        [ngClass]="{
+          'pointer-events-none overflow-hidden': !isAnalisisExpanded,
+          'pointer-events-auto overflow-visible': isAnalisisExpanded
+        }" class="pl-8 flex flex-col gap-1">
+
+        <!-- Módulo carga archivo excel -->
+        <!-- *ngIf="user.funcionario.grado_id == 12" --> 
+        <a  class="p-2 rounded flex items-center gap-2 transition-colors" (click)="closeSidebarIsMobile()" routerLink="/cargar-analisis-funcionario" routerLinkActive="font-medium" [routerLinkActiveOptions]="{ exact: true }" [ngClass]="{'hover:bg-gray-200 dark:hover:bg-gray-500': !isActive('/cargar-analisis-funcionario')}">
+          <span class="">Carga masiva </span>
+        </a>        
+
+        <!-- Módulo de ingreso de funcionario -->
+        <a class="p-2 rounded flex items-center gap-2 transition-colors" (click)="closeSidebarIsMobile()" routerLink="/ingreso-analisis-funcionario" routerLinkActive="font-medium" [routerLinkActiveOptions]="{ exact: true }" [ngClass]="{'hover:bg-gray-200 dark:hover:bg-gray-500': !isActive('/ingreso-analisis-funcionario')}">
+          <span class="">Ingreso de funcionario</span>
+        </a>
+
+        <!-- Módulo de listar funcionario -->
+        <a class="p-2 rounded flex items-center gap-2 transition-colors" (click)="closeSidebarIsMobile()" routerLink="/listar-analisis-funcionario" routerLinkActive="font-medium" [routerLinkActiveOptions]="{ exact: true }" [ngClass]="{'hover:bg-gray-200 dark:hover:bg-gray-500': !isActive('/listar-analisis-funcionario')}">
+          <span class="">Listado Funcionarios</span>
+        </a>
+      </div>
+
+      <!-- Área de CONTABILIDAD -->
+      <!-- Botón Área de contabilidad, hace referencia a si se ejecuta el despliege y por lo tanto, mostrar los enlaces que contiene -->
+      <a (click)="isContabilidadExpanded = !isContabilidadExpanded"
+        [ngClass]="{
+          'hover:bg-gray-200 dark:hover:bg-gray-500': !isGroupActive('contabilidad'),
+          'bg-green-500 text-gray-100': isGroupActive('contabilidad')
+        }" class="cursor-pointer p-2 rounded flex items-center gap-2 select-none">
+        <mat-icon> calculate </mat-icon>
+        <span> Área de Contabilidad </span>
+      </a>
+
+      <!-- DIV con un módulo (listado) -->
+      <div [@expandCollapse]="isContabilidadExpanded ? 'expanded' : 'collapsed'"
+        [ngClass]="{
+          'pointer-events-none overflow-hidden': !isContabilidadExpanded,
+          'pointer-events-auto overflow-visible': isContabilidadExpanded
+        }" class="pl-8 flex flex-col gap-1">
+
+        <!--Módulo de listado -->
+        <a routerLink="/contabilidad" (click)="closeSidebarIsMobile()" class="p-2 rounded flex items-center gap-2 transition-colors" routerLink="/contabilidad" routerLinkActive="font-medium" [ngClass]="{'hover:bg-gray-200 dark:hover:bg-gray-500': !isActive('/contabilidad')}">
+          <span>Listado Funcionarios</span>
+        </a>
+      </div>
+
+      <!-- Área de PAGO -->
+      <!-- Botón Área de pago, hace referencia a si se ejecuta el despliege y por lo tanto, mostrar los enlaces que contiene -->
+      <a (click)="isPagoExpanded = !isPagoExpanded"
+        [ngClass]="{
+          'hover:bg-gray-200 dark:hover:bg-gray-500': !isGroupActive('pago'),
+          'bg-green-500 text-gray-100': isGroupActive('pago')
+        }" class="cursor-pointer p-2 rounded flex items-center gap-2 select-none">
+        <mat-icon> paid </mat-icon>
+        <span> Área de pago </span>
+      </a>
+
+      <!-- DIV con un módulo (listado) -->
+      <div [@expandCollapse]="isPagoExpanded ? 'expanded' : 'collapsed'"
+        [ngClass]="{
+          'pointer-events-none overflow-hidden': !isPagoExpanded,
+          'pointer-events-auto overflow-visible': isPagoExpanded
+        }" class="pl-8 flex flex-col gap-1">
+
+        <!--Módulo de listado -->
+        <a routerLink="/pagos" (click)="closeSidebarIsMobile()" class="p-2 rounded flex items-center gap-2 transition-colors" routerLink="/pagos" routerLinkActive="font-medium" [ngClass]="{'hover:bg-gray-200 dark:hover:bg-gray-500': !isActive('/pagos')}">
+          <span>Listado Funcionarios</span>
+        </a>
+      </div>
+
+      <!-- Mantenedor -->
+      <a routerLink="/mantenedor" (click)="closeSidebarIsMobile()" routerLinkActive="bg-green-500 text-gray-100" [routerLinkActiveOptions]="{ exact: true }" class="p-2 rounded flex items-center gap-2 transition-colors" [ngClass]="{'hover:bg-gray-200 dark:hover:bg-gray-500': !isActive('/mantenedor')}">
+        <mat-icon>groups_2</mat-icon> 
+        <span>Mantenedor</span>
+      </a>
+
+      <!-- Reportabilidad -->
+      <a routerLink="/reportabilidad" (click)="closeSidebarIsMobile()" routerLinkActive="bg-green-500 text-gray-100" [routerLinkActiveOptions]="{ exact: true }" class="p-2 rounded flex items-center gap-2 transition-colors" [ngClass]="{'hover:bg-gray-200 dark:hover:bg-gray-500': !isActive('/reportabilidad')}">
+        <mat-icon>bar_chart</mat-icon> 
+        <span>Reportabilidad</span>
+      </a>
+
+      <!-- Cierre de sesión -->
+      <a (click)="logout()" class="hover:bg-amber-300 hover:text-white p-2 rounded flex items-center gap-2 transition-colors cursor-pointer select-none">
+        <mat-icon>logout</mat-icon>
+        <span>Cerrar sesión</span>
+      </a>
+    </nav>
+  </mat-sidenav>
+
+      <!-- SIDENAV TOP-HORIZONTAL -->
+  <mat-sidenav-content class="!bg-white dark:!bg-gray-900">
+    <mat-toolbar color="primary" class="flex justify-between !bg-white dark:!bg-gray-900 !text-gray-800 dark:!text-gray-100">
+      <button mat-icon-button (click)="toggleSidebar()">
+        <mat-icon class="!text-gray-800 dark:!text-gray-100">menu</mat-icon>
+      </button>
+        <p *ngIf="expiracionClave" @fadeIn class="hidden md:block text-sm">Expiración clave de autentificatic: <span class="text-amber-600 font-medium aling-end">{{expiracionClave}}</span></p>
+
+
+      <div class="flex items-center justify-center gap-2">
+        <button mat-icon-button (click)="toggleDarkMode()" [matTooltip]="isDarkMode ? 'Modo claro' : 'Modo oscuro'">
+          <mat-icon class="!text-gray-800 dark:!text-gray-100">{{ isDarkMode ? 'light_mode' : 'dark_mode' }}</mat-icon>
+        </button>
+        
+        <span class="text-sm">Bienvenido, menu usuario</span>
+        <!-- Botón perfil de usuario -->
+        <button mat-icon-button [matMenuTriggerFor]="beforeMenu">
+          <mat-icon class="!text-gray-800 dark:!text-gray-100">account_circle</mat-icon>
+        </button>
+        <!-- Mini menú de usuario -->
+        <mat-menu #beforeMenu="matMenu" xPosition="before" class="!bg-gray-100 dark:!bg-gray-800">
+          <div class="w-full flex justify-center mb-2">
+            <span class="rounded-xl bg-green-400 text-green-700 px-2 py-1 text-xs mx-auto">
+              C.P.R GDO. 13
+            </span>
+          </div>
+          <p class="text-xs px-4 !text-gray-800 dark:!text-gray-100">usuario123&#64;gmail.com</p>
+          <a class="!text-gray-800 dark:!text-gray-100" routerLink="/" mat-menu-item>
+            <mat-icon class="!text-gray-800 dark:!text-gray-100">home</mat-icon>Inicio
+          </a>
+          <a class="!text-gray-800 dark:!text-gray-100" routerLink="/mi-perfil" mat-menu-item>
+            <mat-icon class="!text-gray-800 dark:!text-gray-100">person</mat-icon>Mi Perfil
+          </a>
+          <a class="!text-gray-800 dark:!text-gray-100" routerLink="/documentacion" mat-menu-item>
+            <mat-icon class="!text-gray-800 dark:!text-gray-100">library_books</mat-icon>Biblioteca
+          </a>
+          <button class="!text-gray-800 dark:!text-gray-100" mat-menu-item (click)="logout()">
+            <mat-icon class="!text-gray-800 dark:!text-gray-100">logout</mat-icon>Cerrar sesión
+          </button>
+        </mat-menu>
+      </div>
+    </mat-toolbar>
+    <!-- Footer -->
+    <div class="flex flex-col bg-gray-100 dark:bg-gray-900 min-h-[calc(100vh-64px)]">
+        <main class="p-6">
+            <router-outlet></router-outlet>
+        </main>
+        <footer class="mt-auto text-right text-[11px] py-3 px-6 text-gray-700 dark:text-gray-300">
+            Dirección de Finanzas, Amunátegui #519 piso 7, Santiago. |
+            <span class="text-green-600">Carabineros de Chile</span> © 2025
+        </footer>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,0 +1,115 @@
+<div *ngIf="!loading" class="h-screen flex flex-col justify-between items-center relative overflow-hidden">
+
+  <!-- Imagenes Fijas -->
+  <a href="https://www.carabineros.cl/" target="_blank" class="fixed top-4 left-4 z-50">
+    <img class="w-40 md:w-44 lg:w-xs object-cover select-none cursor-pointer" src="/assets/img/carabineros_de_chile.png" alt="logo_carabineros">
+  </a>
+  <a href="http://autentificatic.carabineros.cl/" target="_blank" class="fixed bottom-4 right-4 md:block hidden z-50">
+    <img class="md:w-36 lg:w-64 object-cover select-none cursor-pointer" src="/assets/img/autentificatic.png" alt="logo_autentificatic">
+  </a>
+
+  <div class="flex-grow flex items-center justify-center w-full relative z-10 px-6 lg:px-0">
+    <div class="container max-w-screen-lg flex shadow-lg rounded-lg overflow-hidden bg-[rgba(117,117,117,0.5)]">
+      <!-- Formulario -->
+      <div class="w-full md:w-1/2 p-4 lg:p-12 flex flex-col justify-center">
+        <div class="flex justify-center mb-6">
+          <img src="/assets/img/logo_difincar.png" class="w-32 md:w-28 lg:w-44 object-cover select-none pointer-events-none" draggable="false" alt="logo_difincar">
+        </div>
+
+        <h2 class="text-md md:text-lg lg:text-2xl font-bold text-center text-white leading-snug mb-2">
+          Bienvenido(a) a<br>
+          <span class="text-lg md:text-xl lg:text-3xl drop-shadow text-amber-400">Gestión Tesoreria</span>
+        </h2>
+
+        <p class="text-[10px] md:text-[11px] lg:text-xs text-center text-gray-300 mb-2 md:mb-6 lg:mb-8 tracking-wide">
+          Acceso a los portales de la <span class="font-bold">Dirección de Finanzas</span> de Carabineros de Chile
+        </p>
+
+        <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="space-y-2 md:space-y-2 lg:space-y-4">
+          <div>
+            <label for="username" class="block text-[10px] md:text-xs text-gray-200 font-medium mb-1 tracking-wide">R.U.T</label>
+            <input
+              id="username"
+              name="username"
+              [(ngModel)]="form.rut"
+              required
+              placeholder="Ingrese su usuario"
+              class="w-full px-4 py-1.5 rounded-md border border-gray-300 bg-transparent text-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 text-[11px] md:text-xs lg:text-sm"
+            />
+          </div>
+
+          <div class="relative">
+            <label for="password" class="block text-[10px] md:text-xs text-gray-200 font-medium mb-1 tracking-wide">Contraseña</label>
+            <input
+              [type]="verPassword ? 'text' : 'password'"
+              id="password"
+              name="password"
+              [(ngModel)]="form.password"
+              required
+              placeholder="Ingrese su contraseña"
+              class="w-full px-4 py-1.5 rounded-md border border-gray-300 bg-transparent text-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500  ext-[11px] md:text-xs lg:text-sm pr-10"
+            />
+            <button type="button" (click)="verPassword = !verPassword" class="absolute right-2 top-10 md:top-9.5 lg:top-10 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white transition-colors text-sm cursor-pointer">
+              <mat-icon>{{ verPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </div>
+
+          <div class="flex items-center justify-end">
+            <a href="http://autentificatic.carabineros.cl/password/reset" target="_blank" class="text-gray-200 text-[10px] lg:text-xs hover:text-gray-100 hover:underline transition-colors">¿Olvidaste tu contraseña?</a>
+          </div>
+
+          <button type="submit" [disabled]="!loginForm.valid || isSubmitting" class="w-full text-[11px] lg:text-xs bg-green-700 hover:bg-green-600 text-white py-1 lg:py-1.5 rounded-md transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+            <mat-icon class="!text-green-300" [ngClass]="{ 'animate-spin': isSubmitting }">
+              {{ isSubmitting ? 'autorenew' : 'login' }}
+            </mat-icon>
+            {{ isSubmitting ? 'Ingresando...' : 'Ingresar' }}
+          </button>
+        </form>
+      </div>
+      <!-- Imagen Carabineros -->
+      <div class="w-1/2 hidden md:flex md:justify-center md:items-end">
+        <img src="/assets/img/carabs_estadisticas.png" alt="Imagen login" draggable="false" class="lg:h-full lg:px-4 lg:pt-6 w-full md:px-2 select-none pointer-events-none" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Pie de Página -->
+  <footer class="mb-6 text-center mx-2 lg:mx-0 z-10">
+    <p class="text-[10px] md:text-[11px] lg:text-sm font-medium text-gray-100 mb-1">
+      Un desarrollo de la Dirección de Finanzas - Carabineros de Chile
+    </p>
+    <p class="text-[10px] md:text-[11px] lg:text-xs text-gray-300 leading-relaxed">
+      ¿Problemas con la plataforma? Escríbenos a
+      <a href="mailto:ayuda.tecnica.difincar@carabineros.cl" class="text-amber-300 underline hover:text-amber-200">ayuda.tecnica.difincar&#64;carabineros.cl</a>
+      o llámanos al
+      <a href="tel:21910" class="text-amber-300 underline hover:text-amber-200">21910</a>.<br>
+      Atención de lunes a viernes, de 15:00 a 17:00 hrs.
+    </p>
+  </footer>
+</div>
+
+<!-- Loader DIFINCAR -->
+<div *ngIf="showLoader"
+     [@fadeSlideOut]="loading ? 'visible' : 'hidden'"
+     (@fadeSlideOut.done)="onLoaderAnimationDone()"
+     class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-emerald-800 text-gray-200">
+
+  <div class="relative w-44 h-44 lg:w-48 lg:h-48 flex items-center justify-center z-10">
+    <div class="absolute w-full h-full animate-spin rounded-full border-8 border-t-transparent border-green-white opacity-80"></div>
+    <img src="/assets/img/logo_difincar.png" alt="logo_difincar" class="w-32 h-32 lg:w-36 lg:h-36 object-contain z-10" />
+  </div>
+
+  <p class="mt-8 text-sm md:text-md lg:text-lg font-medium tracking-wide z-10 text-center">
+    Dirección de Finanzas - Carabineros de Chile
+  </p>
+</div>
+
+<!-- Video de fondo -->
+<video #fondoVideo autoplay muted loop playsinline (loadeddata)="onVideoReady()" class="absolute top-0 left-0 w-full h-full object-cover z-0 brightness-50 pointer-events-none">
+  <source src="/assets/video/login_carabineros.mp4" type="video/mp4" />
+  Tu navegador no soporta video HTML5.
+</video>
+
+<!-- Filtro Verde -->
+<div *ngIf="!loading" class="absolute top-0 left-0 w-full h-full bg-green-200 mix-blend-multiply z-0 pointer-events-none"></div>
+

@@ -10,6 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-contabilidad',
@@ -56,7 +57,10 @@ displayedColumns: string[] = [
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private ingresoService: IngresoFuncionarioService) {}
+  constructor(
+    private ingresoService: IngresoFuncionarioService,
+    private snackBar: MatSnackBar,
+  ) {}
 
   ngOnInit(): void {
     this.cargarIngresos();
@@ -107,6 +111,16 @@ displayedColumns: string[] = [
     this.dataSource.filter = filter;
   }
 
+  historialRegistro(registro: any): void{
+    alert("Generar modal con historial ")
+    console.log("Botón historial apretado")
+  }
+
+  rechazoRegistro(registro: any): void{
+    alert("Alerta de rechazo! Devolver a Análisis")
+    console.log("Botón rechazo apretado")
+  }
+
   editarRegistro(registro: any): void {
     const nro = prompt('Ingrese N° Comprobante Contable:', registro.nroComprobanteContable || '');
     if (nro === null) return;
@@ -130,6 +144,40 @@ displayedColumns: string[] = [
       }
     });
   }
+
+    //////////SIMULADO//////////
+  registroCompleto(element: any): boolean {
+    return true
+    //return element.rutFuncioario && element.nombreFuncionario && element.gradoFuncionario &&
+          //element.concepto && element.periodoRemuneracion && element.motivoPago &&
+          //element.montoRemuneracion != null && element.estado === 'Por enviar';
+  }
+
+  
+    //////////SIMULADO//////////
+  enviarAContabilidad(element: any): void {
+    const confirmado = confirm(`¿Estás seguro que deseas enviar al funcionario "${element.nombreFuncionario}" a Contabilidad?`);
+
+    //if (!confirmado) return;
+
+    // Actualizamos el estado del funcionario a 'Enviado'
+    const funcionarioEnviado = { ...element, estado: 'Enviado' };
+
+    // Añadir a la segunda tabla (Contabilidad)
+    //this.funcionariosEnviados.data = [...this.funcionariosEnviados.data, funcionarioEnviado];
+
+    // Eliminar de la tabla principal
+    this.dataSource.data = this.dataSource.data.filter(f => f.idIngreso !== element.idIngreso);
+
+    // Mostrar notificación
+    this.snackBar.open(`Funcionario "${element.nombreFuncionario}" enviado a Contabilidad.`, 'Cerrar', {
+      duration: 3500,
+      horizontalPosition: 'end',
+      verticalPosition: 'bottom',
+      panelClass: ['snackbar-success'] // Puedes definir esta clase en tu CSS si deseas personalizarla
+    });
+  }
+
 
   eliminarRegistro(registro: any): void {
     const id = registro.idIngreso;

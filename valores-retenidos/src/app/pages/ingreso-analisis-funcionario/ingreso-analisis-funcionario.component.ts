@@ -18,6 +18,7 @@
   import { IngresoFuncionarioService } from '../../services/ingreso-funcionario.service';
   import { forkJoin } from 'rxjs';
   import { finalize } from 'rxjs/operators';
+  
 
   @Component({
     selector: 'app-ingreso-analisis-funcionario',
@@ -69,6 +70,25 @@
 
     //LOEADER
     loading: boolean = true;
+
+    constructor(
+      private fb: FormBuilder,
+      private snackBar: MatSnackBar,
+      private IngresoFuncionarioService: IngresoFuncionarioService
+
+    ) {
+      //Definir de forma directa
+      this.analisisForm = this.fb.group({
+        rutFuncioario: ['', [Validators.required, Validators.minLength(3)]],
+        nombreFuncionario: ['', [Validators.required, Validators.minLength(3)]],
+        gradoFuncionario: ['', Validators.required],
+        motivoBloqueo: ['', Validators.required],
+        concepto: ['', Validators.required], 
+        ncuDOE: ['', [Validators.required, Validators.minLength(2)]],
+        observacionesFuncionario: ['', [Validators.required, Validators.minLength(2)]],
+        periodos: this.fb.array([this.crearPagoFormGroup()])  // Inicializamos con un grupo
+      });
+    }
 
     ngOnInit(): void {
       console.log("Hola");
@@ -159,24 +179,7 @@
   }
 
 
-    constructor(
-      private fb: FormBuilder,
-      private snackBar: MatSnackBar,
-      private IngresoFuncionarioService: IngresoFuncionarioService
 
-    ) {
-      //Definir de forma directa
-      this.analisisForm = this.fb.group({
-        rutFuncioario: ['', [Validators.required, Validators.minLength(3)]],
-        nombreFuncionario: ['', [Validators.required, Validators.minLength(3)]],
-        gradoFuncionario: ['', Validators.required],
-        motivoBloqueo: ['', Validators.required],
-        concepto: ['', Validators.required], 
-        ncuDOE: ['', [Validators.required, Validators.minLength(2)]],
-        observacionesFuncionario: ['', [Validators.required, Validators.minLength(2)]],
-        periodos: this.fb.array([this.crearPagoFormGroup()])  // Inicializamos con un grupo
-      });
-    }
 
     crearPagoFormGroup(): FormGroup {
       return this.fb.group({
@@ -245,14 +248,14 @@
         funcionario: { 
           rut: form.rutFuncioario,
           nombre: form.nombreFuncionario,
-          grado: parseInt(form.gradoFuncionario) 
+          grado: parseInt(form.gradoFuncionario)
         },
         concepto: form.concepto,
         ncu_doe: parseInt(form.ncuDOE, 10),
         motivo_bloqueo: form.motivoBloqueo,
-        observaciones: form.observacionesFuncionario,
+        observaciones_analisis: form.observacionesFuncionario,
         periodos: form.periodos.map((p: any) => ({
-          periodo_remuneracion: p.periodoRemuneracion,
+          periodo_remuneracion: p.periodoRemuneracion+"-01",
           motivo_pago: parseInt(p.motivoPago, 10),
           monto: parseFloat(p.montoRemuneracion.toString().replace('.', '').replace(',', '.'))
         }))

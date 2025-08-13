@@ -1,0 +1,14 @@
+:host {
+  display: block;
+  background-color: #f9fafb;
+  border-radius: 0.75rem;
+  padding: 2rem 2.5rem;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+input {
+  background-color: white;
+}

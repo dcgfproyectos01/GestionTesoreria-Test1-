@@ -1,0 +1,372 @@
+<!-- Contenedor estándar -->
+<div class="w-full md:col-span-2 p-6 sm:p-8 bg-white rounded-lg shadow-md text-sm">
+
+    <!-- TÍTULO DE PÁGINA-->
+    <div class="!text-green-600 mb-6 w-fit rounded flex gap-2 !text-xl items-center">
+        <mat-icon> file_open </mat-icon>
+        <h2 class="font-semibold ">Cargar información desde archivo Excel</h2> 
+    </div>
+
+    <!-- INPUT EXCEL e Información -->
+    <div class="grid md:grid-cols-12 gap-1">
+
+        <!-- Columna Izquierda || Input para cargar archivo Excel -->
+        <div class=" md:col-span-7 rounded">
+
+            <!-- Input para cargar archivo Excel -->
+            <div class="flex gap-4 p-1">
+                <!-- Input oculto -->
+                <input type="file" id="archivoExcel" #inputArchivoExcel (change)="onArchivoExcelSeleccionado($event)" accept=".xls,.xlsx" class="hidden"/>
+
+                <!-- Botón que activa el input -->
+                <button type="button" (click)="inputArchivoExcel.click()" class="w-1/4 mt-4 px-4 py-2 text-black bg-gray-50 hover:bg-gray-200 border-gray-300 border rounded cursor-pointer transition-colors" title="Cargar Archivo">
+                    Cargar Archivo
+                </button>
+
+            </div>
+
+            <!-- Nombre del archivo mostrado -->
+            <div class="flex flex-col gap-2">
+                <!-- Nombre del archivo mostrado -->
+                <p *ngIf="nombreArchivoExcel" class="text-sm mt-2 text-gray-700">
+                    Archivo seleccionado: {{ nombreArchivoExcel }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Columna Derecha || Resumen información -->
+        <div class="md:col-span-5 rounded shadow-lg p-1 bg-gray-50">
+
+            <!-- Total registros -->
+            <h3 class="font-medium mb-4 flex items-center gap-2 text-green-600 "> 
+                <mat-icon>
+                    list_alt
+                </mat-icon>
+                Total registros: {{ datosExcel.length }} 
+            </h3>
+
+            <!-- Campos Excedidos -->
+                <div>
+                <h3 class="font-medium mb-2 flex items-center gap-2" [ngClass]="totalCamposExcedidos === 0 ? 'text-green-600' : 'text-red-600'">
+                    <mat-icon>
+                        {{ totalCamposExcedidos === 0 ? 'thumb_up' : 'warning' }}
+                    </mat-icon>
+                    Campos excedidos: {{ totalCamposExcedidos }}
+                </h3>
+
+                <!-- Lista scrollable -->
+                <div *ngIf="camposExcedidos.length > 0" class="max-h-45 overflow-y-auto pr-2 rounded border border-gray-200 bg-white dark:bg-gray-800">
+                    <ul class="text-sm text-gray-700 dark:text-gray-100 list-disc ml-5 pr-1">
+                        <li *ngFor="let exceso of camposExcedidos"
+                            (click)="scrollToFila(exceso.fila - 1)"
+                            class="cursor-pointer hover:text-green-600 hover:underline">
+                        <div class="text-gray-600 font-medium">
+                            Fila {{ exceso.fila }} - Columna: "{{ exceso.columnas.join(', ') }}"
+                        </div>
+                        </li>
+                    </ul>
+                </div>
+                </div>
+            
+                <!-- Campos Vacios -->
+            <div>
+                <!-- Campos Vacios -->
+                <h3 class="font-medium mb-2 flex items-center gap-2"
+                    [ngClass]="totalCamposVacios === 0 ? 'text-green-600' : 'text-red-600'">
+                
+                    <mat-icon>
+                        {{ totalCamposVacios === 0 ? 'thumb_up' : 'warning'
+                        }}
+                    </mat-icon>
+                    
+                    Campos vacíos: {{ totalCamposVacios }}
+                </h3>
+                
+                
+                <!-- Tabla scrollable -->
+                <div *ngIf="camposVacios.length"
+                    class="max-h-45 overflow-y-auto pr-2 rounded border border-gray-200 bg-white dark:bg-gray-800">
+                    <ul class="text-sm text-gray-700 dark:text-gray-100 list-disc ml-5 pr-1">
+                        <!-- Iteración -->
+                        <li *ngFor="let vacio of camposVacios"
+                            (click)="scrollToFila(vacio.fila - 1)"
+                            class="cursor-pointer hover:text-green-600 hover:underline">
+
+                        <div class="text-gray-600 font-medium">
+                            Fila {{ vacio.fila }} - Columna: "{{ vacio.columnas.join(', ') }}"
+                        </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- INFO EXCEL SELECCIONADO -->
+    <div class="w-full relative my-8 p-8 bg-gray-50 rounded-lg shadow-md">
+
+        <!-- Mostrar solo si hay hojas -->
+        <div *ngIf="nombresHojas.length > 0 && !loadingExcel;">
+
+            <!-- TÍTULO -->
+            <!-- TÍTULO DE PÁGINA-->
+            <div class="!text-green-600 mb-6 w-fit rounded flex gap-2 !text-xl items-center">
+                <mat-icon>visibility</mat-icon>
+                <h2 class="text-xl font-medium text-green-600 ">Información de archivo cargado </h2>
+            </div>
+
+
+
+
+            <!-- PESTAÑAS DE HOJAS -->
+            <div class="flex flex-nowrap overflow-x-auto space-x-4 border-b mb-4 pb-2 scrollbar-thin scrollbar-thumb-gray-300">
+                <button *ngFor="let hoja of nombresHojas" (click)="nombreHojaSeleccionada = hoja; cargarHojaExcel(hoja)"
+                    [ngClass]="{
+                        'border-b-2 border-gray-600 text-green-600 font-semibold': nombreHojaSeleccionada === hoja,
+                        'text-gray-600 hover:text-green-500': nombreHojaSeleccionada !== hoja
+                    }" class="px-4 py-2 focus:outline-none">
+                    {{ hoja }}
+                </button>
+            </div>
+
+            <div class="w-full overflow-x-auto">
+                <!-- Tabla con estilo Material actualizado -->
+                <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 w-full !bg-gray-50 dark:!bg-gray-900 dark:!text-gray-100 !border-none !excel-table">
+
+                    <!-- Columnas dinámicas -->
+                    <ng-container *ngFor="let col of columnasExcel; let i = index;" [matColumnDef]="col">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header class="!font-bold !text-sm !bg-green-500 !text-white" [ngClass]="{'rounded-l-md': i == 0}"> {{ col }} </th>
+                        <td mat-cell *matCellDef="let element" class="text-gray-800 dark:text-gray-100 !text-sm truncate" [ngClass]="{'rounded-l-md': i == 0}"> {{ element[col] }} </td>
+                    </ng-container>
+
+                    <!-- Columna de acciones -->
+                    <!-- <ng-container matColumnDef="acciones">
+                        <th mat-header-cell *matHeaderCellDef class="!font-bold !text-sm !bg-green-500 !text-white rounded-r-md"></th>
+                        <td mat-cell *matCellDef="let row; let i = index" class="text-white !flex !items-center justify-center  rounded-r-md">
+                            <button (click)="editarFila(i)" class="bg-amber-400 hover:bg-yellow-500 transition-colors mt-1.5 px-1.5 !rounded-none !rounded-l-md cursor-pointer">
+                                <mat-icon class="!text-lg">edit</mat-icon>
+                            </button>
+                            <button (click)="eliminarFila(i)" class="bg-red-500 hover:bg-red-600 transition-colors mt-1.5 px-1.5 !rounded-none !rounded-r-md cursor-pointer">
+                                <mat-icon class="!text-lg">delete</mat-icon>
+                            </button>
+                        </td>
+                    </ng-container> -->
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    
+                    <tr mat-row *matRowDef="let row; let i = index; columns: displayedColumns;"
+                        #filaExcel
+                        [ngClass]="{ '!bg-yellow-100 dark:!bg-yellow-800': isFilaResaltada(i) }"
+                        class="!bg-white dark:!bg-gray-800 !text-gray-900 dark:!text-gray-100 shadow">
+                    </tr>
+
+                </table>
+            </div>
+
+            
+            <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons class="!bg-gray-50"></mat-paginator>
+
+            <!-- BOTONES TABLA EXCEL-->
+            <div class="w-full flex gap-4 justify-end">
+
+                <!-- BOTÓN CERRAR -->
+                <button type="button" title="Cerrar" (click)="cerrarExcelCargado()" class="ml-2 px-4 py-2 bg-gray-100 border border-gray-300 hover:bg-gray-200 rounded cursor-pointer transition-colors">
+                    Cerrar
+                </button>
+            </div>
+            
+        </div>
+
+        <!-- MENSAJE ALTERNATIVO -->
+        <div *ngIf="!loadingExcel && dataSource.data.length == 0">
+            <p class="text-gray-500 text-sm"> No hay datos para mostrar. </p>
+        </div>
+
+        <!-- SPINNER -->
+        <app-spinner *ngIf="loadingExcel" class="flex justify-center items-center my-8"> </app-spinner>
+
+
+
+
+        <!------------------------------------- SEGUNDA TABLA ------------------------------------->
+
+        <!-- separador con ícono centrado -->
+        <div *ngIf="datosExcel.length > 0" class="w-full my-8 flex justify-center items-center">
+        <mat-icon class="!text-6xl !w-16 !h-16 !leading-none !text-green-600">south</mat-icon>
+        </div>
+
+
+        <!-- segunda tabla -->
+        <div *ngIf="datosExcel.length > 0" class="overflow-x-auto my-8 p-8 bg-gray-50 rounded-lg shadow-md ">
+            <div class="!text-green-600 mb-6 w-fit rounded flex gap-2 !text-xl items-center">
+                <mat-icon>backup</mat-icon>
+                <h1 class="text-xl font-medium text-green-600 p-2" >Información a subir al sistema</h1>
+            </div>
+
+            <table class="mat-table min-w-full border border-gray-300 text-sm text-left">
+                <thead class="bg-green-600 text-white">
+                <tr class="text-center">
+                    <th class="border border-gray-300 px-3 py-2">N° Registro</th>
+                    <th class="border border-gray-300 px-3 py-2">RUT</th>
+                    <th class="border border-gray-300 px-3 py-2">NOMBRE</th>
+                    <th class="border border-gray-300 px-3 py-2">GRADO</th>
+                    <th class="border border-gray-300 px-3 py-2">CONCEPTO</th>
+                    <th class="border border-gray-300 px-3 py-2">MOTIVO BLOQUEO</th>
+                    <th class="border border-gray-300 px-3 py-2">PERIODO REMUNERACION</th>
+                    <th class="border border-gray-300 px-3 py-2">MOTIVO REMUNERACION</th>
+                    <th class="border border-gray-300 px-3 py-2">MONTO</th>
+                    <th class="border border-gray-300 px-3 py-2">OBSERVACIONES</th>
+                    <th class="border border-gray-300 px-3 py-2">N.C.U DOE</th>
+                    <th class="border border-gray-300 px-3 py-2">ACCIONES</th>
+                    
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let funcionario of datosExcel; let i = index" class="even:bg-gray-50 !text-center" #filaRef (focusout)="onRowFocusOut($event, i, filaRef)">
+                    <td class="text-center border border-gray-300 px-3 py-2">{{ i+1 }}</td>
+
+                    <!-- //////////////////////////////////////// RUT ////////////////////////////////////////////////////////// -->
+                    <td class="border border-gray-300 px-3 py-2">
+                        <ng-container *ngIf="indiceEnEdicion === i; else mostrarTexto">
+                            <input type="text" [(ngModel)]="funcionario['RUT']" 
+                            class="text-center h-12 border-2 border-amber-400 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400" 
+                            (keyup.enter)="guardarEdicion($event)"
+                            (keyup.escape)="cancelarEdicion($event)"/>
+
+                        </ng-container>
+                        <ng-template #mostrarTexto> {{ funcionario["RUT"] }} </ng-template>
+                    </td>
+                    <!-- //////////////////////////////////////// RUT ////////////////////////////////////////////////////////// -->
+
+                    <td class="border border-gray-300 px-3 py-2">
+                        <ng-container *ngIf="indiceEnEdicion === i; else mostrarNombre">
+                            <input type="text" [(ngModel)]="funcionario['NOMBRE COMPLETO']" 
+                            class="text-center border-2 h-12 border-amber-400 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400"
+                            (keyup.enter)="guardarEdicion($event)"
+                            (keyup.escape)="cancelarEdicion($event)"/>
+                        </ng-container>
+                        <ng-template #mostrarNombre>
+                            {{ funcionario["NOMBRE COMPLETO"] }}
+                        </ng-template>
+                    </td>
+                    <td class="border border-gray-300 px-3 py-2">
+                        <ng-container *ngIf="indiceEnEdicion === i; else mostrarGrado">
+                            <input type="text" [(ngModel)]="funcionario['GRADO']" 
+                            class="text-center border-2 h-12 border-amber-400 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400" 
+                            (keyup.enter)="guardarEdicion($event)"
+                            (keyup.escape)="cancelarEdicion($event)"/>
+                        </ng-container>
+                        <ng-template #mostrarGrado>
+                            {{ funcionario["GRADO"] }}
+                        </ng-template>
+                    </td>
+                
+                    <td class="border border-gray-300 px-3 py-2">
+                        <ng-container *ngIf="indiceEnEdicion === i; else mostrarConcepto">
+                            <input type="text" [(ngModel)]="funcionario['CONCEPTO']" 
+                            class="text-center border-2 h-12 border-amber-400 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400" 
+                            (keyup.enter)="guardarEdicion($event)"
+                            (keyup.escape)="cancelarEdicion($event)"/>
+                        </ng-container>
+                        <ng-template #mostrarConcepto>
+                            {{ funcionario["CONCEPTO"] }}
+                        </ng-template>
+                    </td>
+                    <td class="border border-gray-300 px-3 py-2">
+                        <ng-container *ngIf="indiceEnEdicion === i; else mostrarMotivoBloqueo">
+                            <input type="text" [(ngModel)]="funcionario['MOTIVO BLOQUEO']" 
+                            class="text-center border-2 h-12 border-amber-400 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400" 
+                            (keyup.enter)="guardarEdicion($event)"
+                            (keyup.escape)="cancelarEdicion($event)"/>
+                        </ng-container>
+                        <ng-template #mostrarMotivoBloqueo>
+                            {{ funcionario["MOTIVO BLOQUEO"] }}
+                        </ng-template>
+                    </td>
+                    <td class="border border-gray-300 px-3 py-2">
+                        <ng-container *ngIf="indiceEnEdicion === i; else mostrarPERIODOREMUNERACION">
+                            <input type="text" [(ngModel)]="funcionario['PERIODO REMUNERACION']" 
+                            class="text-center border-2 h-12 border-amber-400 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400" 
+                            (keyup.enter)="guardarEdicion($event)"
+                            (keyup.escape)="cancelarEdicion($event)"/>
+                        </ng-container>
+                        <ng-template #mostrarPERIODOREMUNERACION>
+                            {{ funcionario["PERIODO REMUNERACION"] }}
+                        </ng-template>
+                    </td>
+                    <td class="border border-gray-300 px-3 py-2">
+                        <ng-container *ngIf="indiceEnEdicion === i; else mostrarTIPOREMUNERACION">
+                            <input type="text" [(ngModel)]="funcionario['TIPO REMUNERACION']" 
+                            class="text-center border-2 h-12 border-amber-400 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400" 
+                            (keyup.enter)="guardarEdicion($event)"
+                            (keyup.escape)="cancelarEdicion($event)"/>
+                        </ng-container>
+                        <ng-template #mostrarTIPOREMUNERACION>
+                            {{ funcionario["TIPO REMUNERACION"] }}
+                        </ng-template>
+                    </td>
+                    <td class="border border-gray-300 px-3 py-2">
+                        <ng-container *ngIf="indiceEnEdicion === i; else mostrarMONTO">
+                            <input type="text" [(ngModel)]="funcionario['MONTO']" 
+                            class="text-center border-2 h-12 border-amber-400 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400" 
+                            (keyup.enter)="guardarEdicion($event)"
+                            (keyup.escape)="cancelarEdicion($event)"/>
+                        </ng-container>
+                        <ng-template #mostrarMONTO>
+                            {{ funcionario["MONTO"] }}
+                        </ng-template>
+                    </td>
+                    <td class="border border-gray-300 px-3 py-2">
+                        <ng-container *ngIf="indiceEnEdicion === i; else mostrarOBSERVACIONES">
+                            <input type="text" [(ngModel)]="funcionario['OBSERVACIONES']" 
+                            class="text-center border-2 h-12 border-amber-400 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400" 
+                            (keyup.enter)="guardarEdicion($event)"
+                            (keyup.escape)="cancelarEdicion($event)"/>
+                        </ng-container>
+                        <ng-template #mostrarOBSERVACIONES>
+                            {{ funcionario["OBSERVACIONES"] }}
+                        </ng-template>
+                    </td>
+                    <td class="border border-gray-300 px-3 py-2">
+                        <ng-container *ngIf="indiceEnEdicion === i; else mostrarNCUDOE">
+                            <input type="text" [(ngModel)]="funcionario['N.C.U. DOE']" 
+                            class="text-center border-2 h-12 border-amber-400 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400" 
+                            (keyup.enter)="guardarEdicion($event)"
+                            (keyup.escape)="cancelarEdicion($event)"/>
+                        </ng-container>
+                        
+                        <ng-template #mostrarNCUDOE>
+                            {{ funcionario["N.C.U. DOE"] }}
+                        </ng-template>
+                    </td>
+                    <!-- ACCIONES -->
+                    <th class="border border-gray-300">
+                        <div class=" flex items-center justify-center text-white rounded-r-md">
+                            <button (click)="editarTablaCargada(i)" class="bg-yellow-400 hover:bg-yellow-500 transition-colors mt-1.5 px-1.5 !rounded-none !rounded-l-md cursor-pointer" title="Editar">
+                                <mat-icon class="!text-lg">edit</mat-icon>
+                            </button>
+                            <button (click)="eliminarFilaCargada(i)" class="bg-red-500 hover:bg-red-600 transition-colors mt-1.5 px-1.5 !rounded-none !rounded-r-md cursor-pointer" title="Eliminar">
+                                <mat-icon class="!text-lg">delete</mat-icon>
+                            </button>
+                        </div>
+                    </th>
+                </tr>
+                </tbody>
+            </table>
+
+            <!-- BOTONES TABLA EXCEL-->
+            <div class="w-full flex gap-4 !items-end !justify-end">
+                <!-- BOTÓN GUARDAR -->
+                <button type="button" (click)="enviarDatos2()" class=" px-4 py-2 mt-2 bg-green-500 text-white hover:bg-green-600  rounded cursor-pointer transition-colors" title="Guardar">
+                    Guardar
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+
+
+</div>
+
+

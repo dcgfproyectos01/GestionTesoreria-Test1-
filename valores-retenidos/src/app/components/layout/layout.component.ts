@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -8,90 +8,78 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ChangeDetectorRef } from '@angular/core';
 import { trigger, state, style, transition, animate } from '@angular/animations';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-layout',
-  imports: [MatIconModule, CommonModule, RouterOutlet, MatSidenavModule, MatToolbarModule, MatButtonModule, RouterLink, MatMenuModule, RouterLinkActive, MatExpansionModule, MatTooltipModule],
+  imports: [
+    MatIconModule, CommonModule, RouterOutlet, MatSidenavModule,
+    MatToolbarModule, MatButtonModule, RouterLink, MatMenuModule,
+    RouterLinkActive, MatExpansionModule, MatTooltipModule
+  ],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.css',
   animations: [
     trigger('expandCollapse', [
-      state('collapsed', style({
-        height: '0px',
-        visibility: 'hidden' // solo las animables
-      })),
-      state('expanded', style({
-        height: '*',
-        visibility: 'visible'
-      })),
+      state('collapsed', style({ height: '0px', visibility: 'hidden' })),
+      state('expanded', style({ height: '*', visibility: 'visible' })),
       transition('collapsed <=> expanded', animate('300ms ease'))
     ])
   ]
 })
-
-
-export class LayoutComponent {
-  //Ejectuado dentro del html, variables banderas
+export class LayoutComponent implements OnInit {
   isDarkMode = false;
   sidebarOpened = true;
   isAnalisisExpanded = false;
   isContabilidadExpanded = false;
   isPagoExpanded = false;
+  user: any = null;
 
   private routeGroups: Record<string, string[]> = {
-    //ruta para ingreso funcionario, separarado por área
-    analisis: ['/ingreso-analisis-funcionario','/cargar-analisis-funcionario','/listar-analisis-funcionario'],
+    analisis: ['/ingreso-analisis-funcionario', '/cargar-analisis-funcionario', '/listar-analisis-funcionario'],
     contabilidad: ['/contabilidad'],
     pago: ['/pagos']
   };
 
   constructor(
     private router: Router,
-    private cdr: ChangeDetectorRef
-  ){
-    // Comprobar si ya estaba activado el modo oscuro en localStorage
+    private cdr: ChangeDetectorRef,
+    private authService: AuthService
+  ) {
     const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-      this.isDarkMode = true;
-      document.documentElement.classList.add('dark');
-    } else {
-      this.isDarkMode = false;
-      document.documentElement.classList.remove('dark');
-    }
+    this.isDarkMode = savedTheme === 'dark';
+    if (this.isDarkMode) document.documentElement.classList.add('dark');
+  }
+
+  ngOnInit() {
+    // Solo nos suscribimos a los datos ya cargados en AuthService
+    this.authService.getUserProfile().subscribe({
+      next: (data) => {
+        this.user = data;
+        console.log('✅console.log: Usuario en LayoutComponent:', this.user);
+      },
+      error: (err) => console.error('Error al obtener usuario en Layout:', err)
+    });
   }
 
   isGroupActive(groupName: keyof typeof this.routeGroups): boolean {
-    const matchOptions = {
-      paths: 'subset',
-      queryParams: 'ignored',
-      matrixParams: 'ignored',
-      fragment: 'ignored'
-    } as const;
-
+    const matchOptions = { paths: 'subset', queryParams: 'ignored', matrixParams: 'ignored', fragment: 'ignored' } as const;
     return this.routeGroups[groupName].some(route => this.router.isActive(route, matchOptions));
   }
 
-  logout(){
-    this.router.navigate(['/login']);
+  logout() {
+    this.authService.logout();
   }
 
-  toggleSidebar(){
+  toggleSidebar() {
     this.sidebarOpened = !this.sidebarOpened;
   }
-  
-  toggleDarkMode(){
+
+  toggleDarkMode() {
     this.isDarkMode = !this.isDarkMode;
-
-    if (this.isDarkMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-
+    document.documentElement.classList.toggle('dark', this.isDarkMode);
+    localStorage.setItem('theme', this.isDarkMode ? 'dark' : 'light');
     this.cdr.detectChanges();
   }
 

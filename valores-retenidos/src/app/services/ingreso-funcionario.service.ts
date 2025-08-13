@@ -6,32 +6,35 @@ import { delay, Observable, of } from 'rxjs';
   providedIn: 'root'
 })
 export class IngresoFuncionarioService {
-  private apiUrl = 'http://localhost:8000/api/common/ingresos/';
+  private apiUrl = 'http://des.gestiontesoreria.carabineros.cl/api/common/';
+  // private apiUrl = 'http://localhost:8000/api/common/ingresos/';
+
 
   constructor(private http: HttpClient) {}
 
   crearIngreso(data: any): Observable<any> {
-    return this.http.post(this.apiUrl, data);
+    return this.http.post(`${this.apiUrl}ingresos/`, data);
   }
 
-    // ✅ Método para listar los ingresos
+  // ✅ Método para listar los ingresos
   obtenerIngresos(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
+    return this.http.get<any[]>(`${this.apiUrl}ingresos/`);
+
   }
 
-  //OBTENER MOTIVOS DE PAGOS
+  // OBTENER MOTIVOS DE PAGOS
   getMotivosPago(): Observable<any[]> {
-    return this.http.get<any[]>('/api/common/motivos-pago/');
+    return this.http.get<any[]>(`${this.apiUrl}motivos-pago/`);
   }
 
-  //OBTENER GRADOS
+  // OBTENER GRADOS
   getGrados(): Observable<any[]> {
-    return this.http.get<any[]>('/api/common/grados/');
+    return this.http.get<any[]>(`${this.apiUrl}grados/`);
   }
 
-  //OBTENER CONCEPTOS
+  // OBTENER CONCEPTOS
   getConceptos(): Observable<any[]> {
-    return this.http.get<any[]>('/api/common/conceptos/');
+    return this.http.get<any[]>(`${this.apiUrl}conceptos/`);
   }
 
   // ✅ Método para eliminar los ingresos
@@ -40,8 +43,9 @@ export class IngresoFuncionarioService {
   }
 
   actualizarIngreso(id: number, data: any): Observable<any> {
-  return this.http.patch(`/api/common/ingresos/${id}/`, data);
+    return this.http.patch(`${this.apiUrl}${id}/`, data);
   }
+
 
 
   ///////////////////////////// MANTENEDOR /////////////////////////////
