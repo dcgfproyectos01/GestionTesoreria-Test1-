@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 <div class="w-full md:col-span-2 p-6 sm:p-8 bg-white rounded-lg shadow-md text-sm"> 
+=======
+<div class="w-full md:col-span-2 p-6 sm:p-8 bg-white rounded-lg shadow-md text-sm border"> 
+>>>>>>> 8d61a77 (Actualización: se sube carpeta DesGestionTesoreria con los últimos cambios)
 
   <div class="!text-green-600 mb-10 w-fit rounded flex gap-3 !text-xl items-center">
     <mat-icon> groups_2 </mat-icon>
@@ -8,10 +12,17 @@
   <!-- Buscador -->
 
   <h3 class="text-green-600 font-semibold text-lg">Buscar funcionario</h3>
+<<<<<<< HEAD
   <div class="w-full flex flex-wrap items-center gap-3 mb-12 overflow-x-auto !bg-gray-50 dark:!bg-gray-900 !w-fit p-3 shadow rounded">
     <input type="text" [(ngModel)]="valorBusqueda" (input)="formatearRut()"  placeholder="Ingrese rut del funcionario..." class="border border-gray-300 rounded-md px-4 py-2 w-full sm:w-auto min-w-[280px] text-sm focus:outline-none focus:ring-2 focus:ring-green-500"/>
     
     <button (click)="buscarFuncionario()" class="bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded-md flex items-center gap-1">
+=======
+  <div class="flex flex-wrap items-center gap-3 mb-12 overflow-x-auto !bg-gray-50 dark:!bg-gray-900 !w-fit p-3 shadow rounded">
+    <input type="text" [(ngModel)]="valorBusqueda" (input)="formatearRut()"  placeholder="Ingrese rut del funcionario..." class="border border-gray-300 rounded-md px-4 py-2 w-full sm:w-auto min-w-[280px] text-sm focus:outline-none focus:ring-2 focus:ring-green-500"/>
+    
+    <button (click)="buscarFuncionario()" class="bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded-md flex items-center gap-1 cursor-pointer shadow-md">
+>>>>>>> 8d61a77 (Actualización: se sube carpeta DesGestionTesoreria con los últimos cambios)
       <mat-icon>search</mat-icon>
       <span class="hidden sm:inline font-medium">Buscar</span>
     </button>
@@ -19,6 +30,7 @@
 
 
 
+<<<<<<< HEAD
   <!-- Resultado búsqueda -->
 <div *ngIf="funcionarioNoEncontrado" class="mb-6 p-4 border-l-4 border-yellow-500 bg-yellow-50 text-yellow-900 rounded flex items-start space-x-2">
   <!-- Columna del ícono -->
@@ -55,6 +67,96 @@
     </div>
 
     <!-- Rol -->
+=======
+    <!-- Resultado búsqueda -->
+  <div *ngIf="funcionarioNoEncontrado" class="mb-6 p-4 border-l-4 border-yellow-500 bg-yellow-50 text-yellow-900 rounded flex items-start space-x-2">
+    <!-- Columna del ícono -->
+    <div class="">
+      <mat-icon class="text-yellow-600">warning</mat-icon>
+    </div>
+
+    <!-- Columna del texto -->
+    <div>
+      <p class="font-semibold mb-2 mt-0.5">Funcionario no encontrado.</p>
+      <p class="text-sm">Puedes registrarlo manualmente a continuación:</p>
+    </div>
+  </div>
+
+
+  <!-- Funcionario encontrado y editable -->
+  <div *ngIf="funcionarioEncontrado" class="mb-6 p-4 border-l-4 border-green-500  text-green-900 rounded">
+    <form [formGroup]="formEditarFuncionario" (ngSubmit)="guardarCambiosFuncionario()" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+      <div class="col-span-full">
+        <p class="font-semibold text-green-700 text-sm mb-3">Funcionario encontrado, puedes editar los siguientes datos:</p>
+      </div>
+
+      <!-- RUT (solo lectura) -->
+      <div class="flex flex-col">
+        <label for="rut" class="text-sm font-medium text-gray-700">RUT</label>
+        <input id="rut" type="text" formControlName="rut" readonly class="bg-gray-100 cursor-not-allowed border border-gray-300 rounded-md px-3 py-2 text-sm" />
+      </div>
+
+      <!-- Nombre (solo lectura) -->
+      <div class="flex flex-col">
+        <label for="nombre" class="text-sm font-medium text-gray-700">Nombre</label>
+        <input id="nombre" type="text" formControlName="nombre" readonly class="bg-gray-100 cursor-not-allowed border border-gray-300 rounded-md px-3 py-2 text-sm" />
+      </div>
+
+      <!-- Rol -->
+      <div class="flex flex-col">
+        <label for="rol" class="text-sm font-medium text-gray-700">Rol</label>
+        <select id="rol" formControlName="rol" class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+          <option *ngFor="let rol of roles" [value]="rol.id">{{ rol.nombre }}</option>
+        </select>
+      </div>
+
+      <!-- Área de trabajo -->
+      <div class="flex flex-col">
+        <label for="area_trabajo" class="text-sm font-medium text-gray-700">Área de trabajo</label>
+        <select id="area_trabajo" formControlName="area_trabajo" class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+          <option *ngFor="let area of areas" [value]="area">{{ area }}</option>
+        </select>
+      </div>
+
+
+      
+      <!-- Botones: Guardar y Eliminar -->
+      <div class="col-span-full flex justify-between flex-wrap gap-2 sm:justify-end">
+      <!-- Botón eliminar -->
+      <button type="button" (click)="eliminarFuncionario()" class="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded-md flex items-center gap-1 cursor-pointer shadow-lg">
+          <mat-icon>delete</mat-icon>
+          <span>Eliminar</span>
+      </button>
+
+      <!-- Botón guardar -->
+      <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded-md flex items-center gap-1 cursor-pointer shadow-lg">
+          <mat-icon>save</mat-icon>
+          <span>Guardar Cambios</span>
+      </button>
+      </div>
+    </form>
+  </div>
+
+
+
+  <!-- Formulario de ingreso manual -->
+  <form *ngIf="funcionarioNoEncontrado" (ngSubmit)="guardarNuevoFuncionario()" [formGroup]="formFuncionario" class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
+
+    <!-- RUT -->
+    <div class="flex flex-col">
+      <label for="rut" class="text-sm font-medium text-gray-700">RUT</label>
+      <input id="rut" type="text" formControlName="rut" class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+    </div>
+
+    <!-- Nombre -->
+    <div class="flex flex-col">
+      <label for="nombre" class="text-sm font-medium text-gray-700">Nombre</label>
+      <input id="nombre" type="text" formControlName="nombre" class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+    </div>
+
+    <!-- Rol (select) -->
+>>>>>>> 8d61a77 (Actualización: se sube carpeta DesGestionTesoreria con los últimos cambios)
     <div class="flex flex-col">
       <label for="rol" class="text-sm font-medium text-gray-700">Rol</label>
       <select id="rol" formControlName="rol" class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
@@ -62,6 +164,7 @@
       </select>
     </div>
 
+<<<<<<< HEAD
     <!-- Área de trabajo -->
     <div class="flex flex-col">
       <label for="area_trabajo" class="text-sm font-medium text-gray-700">Área de trabajo</label>
@@ -247,4 +350,88 @@
     <mat-paginator class="!bg-white" [pageSizeOptions]="[5,10,25]" showFirstLastButtons></mat-paginator>
   </div> -->
 
+=======
+    <!-- Área de trabajo (select) -->
+    <div class="flex flex-col">
+      <label for="area_trabajo" class="text-sm font-medium text-gray-700">Área de trabajo</label>
+      <select id="area_trabajo" formControlName="area_trabajo" class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+        <option value="Análisis">Análisis</option>
+        <option value="Contabilidad">Contabilidad</option>
+        <option value="Pago">Pago</option>
+      </select>
+    </div>
+
+    <!-- Botón guardar -->
+    <div class="col-span-full flex justify-end">
+      <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-md flex items-center gap-1 ">
+        <mat-icon>person_add</mat-icon>
+        <span>Añadir Funcionario</span>
+      </button>
+    </div>
+  </form>
+
+</div>
+
+
+<div class="w-full md:col-span-2 mt-4 p-6 sm:p-8 bg-white rounded-lg shadow-lg text-sm border">
+  <div class="!text-green-600 mb-10 w-fit rounded flex gap-3 !text-xl">
+    <mat-icon>emoji_people</mat-icon>
+    <h2 class="font-semibold">Listado de usuarios</h2>
+    <span class="ml-1 inline-flex items-center justify-center w-7 h-7 rounded-full bg-green-600 text-white text-xs font-bold">
+      {{ totalCount$ | async }}
+    </span>
+  </div>
+ 
+  
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <!-- ANÁLISIS -->
+    <div class="!bg-gray-50 rounded-lg shadow-md p-3">
+
+      <div class="text-base font-semibold text-green-600 text-center mb-2 border border-green-700 rounded border-b-3">Área Análisis</div>
+      <ng-container *ngIf="analisis$ | async as analisis; else sinAnalisis">
+        <div *ngFor="let u of analisis; trackBy: trackByRut" class="border-dashed border-green-700 border-b-1 rounded p-2 mb-2">
+          <div class="font-semibold text-center text-amber-800">{{ u.nombre }}</div>
+          <div class="text-xs text-center">RUT: {{ u.rut }}</div>
+          <div class="text-xs text-center">Rol: {{ u.rol_nombre || 'Sin rol' }}</div>
+        </div>
+        <div *ngIf="!analisis.length" class="text-xs text-center text-gray-500">Sin usuarios</div>
+      </ng-container>
+      <ng-template #sinAnalisis>
+        <div class="text-xs text-center text-gray-500">Cargando…</div>
+      </ng-template>
+    </div>
+
+    <!-- CONTABILIDAD -->
+    <div class=" !bg-gray-50 rounded-lg shadow-md p-3">
+      <div class="text-base text-green-600 font-semibold text-center mb-2 border border-green-700 rounded border-b-3">Área Contabilidad</div>
+      <ng-container *ngIf="contabilidad$ | async as cont; else sinCont">
+        <div *ngFor="let u of cont; trackBy: trackByRut" class="border-dashed border-green-700 border-b-1 rounded p-2 mb-2">
+          <div class="font-semibold text-center text-amber-800">{{ u.nombre }}</div>
+          <div class="text-xs text-center">RUT: {{ u.rut }}</div>
+          <div class="text-xs text-center">Rol: {{ u.rol_nombre || 'Sin rol' }}</div>
+        </div>
+        <div *ngIf="!cont.length" class="text-xs text-center text-gray-500">Sin usuarios</div>
+      </ng-container>
+      <ng-template #sinCont>
+        <div class="text-xs text-center text-gray-500">Cargando…</div>
+      </ng-template>
+    </div>
+
+    <!-- PAGO -->
+    <div class="!bg-gray-50 rounded-lg shadow-md p-3">
+      <div class="text-base text-green-600 font-semibold text-center mb-2 border border-green-700 rounded border-b-3">Área Pagos</div>
+      <ng-container *ngIf="pago$ | async as pago; else sinPago">
+        <div *ngFor="let u of pago; trackBy: trackByRut" class="border-dashed border-green-700 border-b-1 rounded p-2 mb-2">
+          <div class="font-semibold text-center text-amber-800">{{ u.nombre }}</div>
+          <div class="text-xs text-center">RUT: {{ u.rut }}</div>
+          <div class="text-xs text-center">Rol: {{ u.rol_nombre || 'Sin rol' }}</div>
+        </div>
+        <div *ngIf="!pago.length" class="text-xs text-center text-gray-500">Sin usuarios</div>
+      </ng-container>
+      <ng-template #sinPago>
+        <div class="text-xs text-center text-gray-500">Cargando…</div>
+      </ng-template>
+    </div>
+  </div>
+>>>>>>> 8d61a77 (Actualización: se sube carpeta DesGestionTesoreria con los últimos cambios)
 </div>

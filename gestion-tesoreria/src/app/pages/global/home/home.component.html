@@ -3,10 +3,26 @@
     <h2 class="font-bold mb-2">Datos del Usuario (Autentificatic)</h2>
     <ng-container *ngIf="currentUser">
       <ng-container *ngIf="currentUser">
+<<<<<<< HEAD
         <p><strong>Nombre:</strong> {{ currentUser.primer_nombre }} {{currentUser.apellido_paterno}}</p>
         <p><strong>RUT:</strong> {{ currentUser.rut }}</p>
         <p><strong>Grado:</strong> {{ currentUser.grado }}</p>
         <p><strong>Dotación:</strong> {{ currentUser.dotacion }}</p>
+=======
+        <p><strong>Nombre:</strong> {{ currentUser.primer_nombre }} {{currentUser.apellido_paterno}} </p>
+        <p><strong>RUT:</strong> {{ currentUser.rut }}</p>
+        <p><strong>Grado:</strong> {{ currentUser.grado }}</p>
+        <p><strong>Dotación:</strong> {{ currentUser.dotacion }}</p>
+        <p><strong>Sección: </strong>
+        <ng-container *ngIf="!cargandoSeccion; else loading">
+          <span *ngIf="!errorSeccion; else errorTpl">{{ seccionApps }}</span>
+        </ng-container>
+      </p>
+
+<ng-template #loading>cargando…</ng-template>
+<ng-template #errorTpl><span class="text-red-600">{{ errorSeccion }}</span></ng-template>
+
+>>>>>>> 8d61a77 (Actualización: se sube carpeta DesGestionTesoreria con los últimos cambios)
       </ng-container>
     </ng-container>
     <ng-container *ngIf="!currentUser">

@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
+
 # --------------------------
 # MODELO: Grado
 # --------------------------
@@ -29,8 +31,8 @@ class Rol(models.Model):
 class Funcionario(models.Model):
     rut = models.CharField(max_length=9, primary_key=True)
     nombre = models.CharField(max_length=100)
-    grado = models.ForeignKey(Grado, on_delete=models.PROTECT, related_name='funcionarios')
-    dotacion = models.CharField(max_length=50)
+    grado = models.ForeignKey(Grado, on_delete=models.PROTECT, related_name='funcionarios', null=True, blank=True)
+    dotacion = models.CharField(max_length=50, blank=True, default="")
     rol = models.ForeignKey(Rol, on_delete=models.PROTECT, related_name='funcionarios', null=True, blank=True)  # Nuevo
     area_trabajo = models.CharField(
         max_length=50,
@@ -142,3 +144,21 @@ class PeriodoRemuneracion(models.Model):
 
     def __str__(self):
         return f"{self.periodo_remuneracion.strftime('%m/%Y')} - ${self.monto:,.0f}"
+
+
+# Catálogo de sub-sistemas / aplicaciones
+class Aplicacion(models.Model):
+    id_aplicacion = models.AutoField(primary_key=True)  # 1 = Valores Retenidos, 2 = Desahucio, etc.
+    nombre = models.CharField(max_length=50)
+
+    def __str__(self):
+        return f"{self.id_aplicacion} - {self.nombre}"
+
+# Relación funcionario ↔ aplicación (y opcionalmente rol por app)
+class AccesoAplicacion(models.Model):
+    funcionario = models.ForeignKey(Funcionario, on_delete=models.CASCADE, related_name="accesos_app")
+    aplicacion   = models.ForeignKey(Aplicacion, on_delete=models.CASCADE, related_name="accesos")
+    rol          = models.ForeignKey(Rol, null=True, blank=True, on_delete=models.SET_NULL)
+
+    class Meta:
+        unique_together = ("funcionario", "aplicacion")

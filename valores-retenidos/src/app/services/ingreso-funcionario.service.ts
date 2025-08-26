@@ -12,6 +12,7 @@ export class IngresoFuncionarioService {
 
   constructor(private http: HttpClient) {}
 
+
   crearIngreso(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}ingresos/`, data);
   }

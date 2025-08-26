@@ -38,8 +38,19 @@ import { forkJoin } from 'rxjs';
   templateUrl: './listar-analisis-funcionario.component.html',
   styleUrls: ['./listar-analisis-funcionario.component.css']
 })
+<<<<<<< HEAD
 export class ListarAnalisisFuncionarioComponent implements OnInit, AfterViewInit {
 
+=======
+
+
+export class ListarAnalisisFuncionarioComponent implements OnInit, AfterViewInit {
+
+  readonly MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  mesesDisponibles: { valor: number; texto: string }[] = [];
+
+
+>>>>>>> 8d61a77 (Actualización: se sube carpeta DesGestionTesoreria con los últimos cambios)
   valorBusqueda: string = '';
 
   displayedColumns: string[] = [
@@ -64,6 +75,11 @@ export class ListarAnalisisFuncionarioComponent implements OnInit, AfterViewInit
   displayedColumnsSinAcciones: string[] = this.displayedColumns.filter(col => col !== 'acciones');
   //////////SIMULADO//////////
 
+<<<<<<< HEAD
+=======
+  anios: number[] = [];
+
+>>>>>>> 8d61a77 (Actualización: se sube carpeta DesGestionTesoreria con los últimos cambios)
   conceptos: any[] = [];
 
   gradosFuncionario: any[] = []
@@ -72,6 +88,17 @@ export class ListarAnalisisFuncionarioComponent implements OnInit, AfterViewInit
 
   funcionariosEnviados = new MatTableDataSource<any>([]);
 
+<<<<<<< HEAD
+=======
+
+  filtro = {
+    texto: '',                 // <- lo alimenta tu buscador manual
+    anio: null as number | null,
+    mes:  null as number | null, // lo activamos después
+  };
+
+
+>>>>>>> 8d61a77 (Actualización: se sube carpeta DesGestionTesoreria con los últimos cambios)
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   
@@ -143,6 +170,24 @@ export class ListarAnalisisFuncionarioComponent implements OnInit, AfterViewInit
         });
 
         this.dataSource.data = registrosPlano;
+<<<<<<< HEAD
+=======
+        console.log("RegistrosPlanos:",registrosPlano)
+
+        // Construir lista de años disponibles desde periodoFecha
+        const setAnios = new Set<number>();
+        for (const r of registrosPlano) {
+          const d = this.toDateSafe(r?.periodoFecha);
+          if (d) setAnios.add(d.getFullYear());
+        }
+        this.anios = Array.from(setAnios).sort((a, b) => b - a); // descendente
+
+        // Configurar filtro una vez y aplicar filtros iniciales
+        this.configurarFiltroTabla();
+        this.aplicarFiltros();
+        this.actualizarMesesDisponibles(); // prepara meses según el año (o todos si no hay año)
+
+>>>>>>> 8d61a77 (Actualización: se sube carpeta DesGestionTesoreria con los últimos cambios)
       }, 
       error: err => {
         console.error('Error al obtener ingresos:', err);
@@ -166,6 +211,7 @@ export class ListarAnalisisFuncionarioComponent implements OnInit, AfterViewInit
 
 
 
+<<<<<<< HEAD
   aplicarFiltroManual(event: Event) {
     const filtroValor = (event.target as HTMLInputElement).value.trim().toLowerCase();
     this.dataSource.filterPredicate = (data: any, filter: string) =>
@@ -174,10 +220,19 @@ export class ListarAnalisisFuncionarioComponent implements OnInit, AfterViewInit
       data.ncuDOE?.toString().includes(filter) ||
       data.montoRemuneracion?.toString().includes(filter);
     this.dataSource.filter = filtroValor;
+=======
+  aplicarFiltroManual(_: Event) {
+    this.filtro.texto = (this.valorBusqueda || '').trim().toLowerCase();
+    this.aplicarFiltros();
+>>>>>>> 8d61a77 (Actualización: se sube carpeta DesGestionTesoreria con los últimos cambios)
   }
 
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8d61a77 (Actualización: se sube carpeta DesGestionTesoreria con los últimos cambios)
   // obtenerIdGrado(nombre: string): number {
   //   const grado = this.gradoFuncionario.find(g => g.nombre === nombre);
   //   return grado?.id || -1;
@@ -293,6 +348,36 @@ export class ListarAnalisisFuncionarioComponent implements OnInit, AfterViewInit
   }
 
 
+<<<<<<< HEAD
+=======
+
+  onCambioAnio() {
+    this.actualizarMesesDisponibles();
+    this.aplicarFiltros();
+  }
+
+  private actualizarMesesDisponibles() {
+    const set = new Set<number>();
+
+    for (const r of this.dataSource.data) {
+      const d = this.toDateSafe(r?.periodoFecha);
+      if (!d) continue;
+      if (this.filtro.anio && d.getFullYear() !== this.filtro.anio) continue; // si hay año, sólo meses de ese año
+      set.add(d.getMonth() + 1); // 1..12
+    }
+
+    const meses = Array.from(set).sort((a, b) => a - b);
+    this.mesesDisponibles = meses.map(v => ({ valor: v, texto: this.MESES[v - 1] }));
+
+    // si el mes seleccionado ya no existe para el año elegido, resetea
+    if (this.filtro.mes && !meses.includes(this.filtro.mes)) {
+      this.filtro.mes = null;
+    }
+  }
+
+
+
+>>>>>>> 8d61a77 (Actualización: se sube carpeta DesGestionTesoreria con los últimos cambios)
   // Reemplaza los actuales:
   obtenerIdMotivoPago(nombre: string): number {
     const m = this.motivosPago.find(mp => mp.nombre_motivo_pago === nombre);
@@ -365,6 +450,63 @@ export class ListarAnalisisFuncionarioComponent implements OnInit, AfterViewInit
     });
   }
 
+<<<<<<< HEAD
 
 
+=======
+  /** Parser robusto para periodoFecha (acepta Date, 'YYYY-MM-DD', 'YYYY-MM', 'MM/yyyy') */
+  /** Parser robusto y sin desfases de zona horaria */
+  private toDateSafe(v: any): Date | null {
+    if (!v) return null;
+    if (v instanceof Date) return isNaN(v.getTime()) ? null : v;
+
+    const s = String(v).trim();
+
+    // MM/yyyy  -> local
+    let m = /^(\d{2})\/(\d{4})$/.exec(s);
+    if (m) return new Date(+m[2], +m[1] - 1, 1);
+
+    // YYYY-MM o YYYY-MM-DD o ISO que empiece así -> local
+    m = /^(\d{4})-(\d{2})(?:-(\d{2}))?/.exec(s);
+    if (m) return new Date(+m[1], +m[2] - 1, m[3] ? +m[3] : 1);
+
+    // Último intento (por si viniera en otro formato)
+    const d = new Date(s);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+
+  /** Define un único predicate (texto + año [+ mes después]) */
+  private configurarFiltroTabla() {
+    this.dataSource.filterPredicate = (data: any, raw: string) => {
+      const f = JSON.parse(raw || '{}') as typeof this.filtro;
+
+      // --- TEXTO: rut, nombre, ncu, monto ---
+      const t = (f.texto || '').toString().trim().toLowerCase();
+      const coincideTexto =
+        !t ||
+        (data.funcionario?.rut ?? '').toString().toLowerCase().includes(t) ||
+        (data.funcionario?.nombre ?? '').toString().toLowerCase().includes(t) ||
+        (data.ncuDOE ?? '').toString().toLowerCase().includes(t) ||
+        (data.montoRemuneracion ?? '').toString().toLowerCase().includes(t);
+
+      // --- FECHA desde periodoFecha (local, sin desfase) ---
+      const fecha = this.toDateSafe(data?.periodoFecha);
+      const anioData = fecha ? fecha.getFullYear() : null;
+      const mesData  = fecha ? (fecha.getMonth() + 1) : null;
+
+      const coincideAnio = !f.anio || anioData === f.anio;
+      const coincideMes  = !f.mes  || mesData  === f.mes;
+
+      return coincideTexto && coincideAnio && coincideMes;
+    };
+  }
+
+
+  /** Aplica los filtros y resetea la paginación */
+  aplicarFiltros() {
+    this.dataSource.filter = JSON.stringify(this.filtro);
+    if (this.dataSource.paginator) this.dataSource.paginator.firstPage();
+  }
+>>>>>>> 8d61a77 (Actualización: se sube carpeta DesGestionTesoreria con los últimos cambios)
 }

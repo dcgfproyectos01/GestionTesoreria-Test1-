@@ -12,6 +12,11 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 import { AuthService } from '../../../services/auth.service';
 import { ToastrService } from 'ngx-toastr';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+<<<<<<< HEAD
+=======
+import { IngresoFuncionarioService } from '../../../services/ingreso-funcionario.service'; // NEW
+
+>>>>>>> 8d61a77 (Actualización: se sube carpeta DesGestionTesoreria con los últimos cambios)
 
 @Component({
   selector: 'app-layout',
@@ -61,6 +66,16 @@ export class LayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     contabilidad: ['/contabilidad'],
     pago: ['/pagos']
   };
+<<<<<<< HEAD
+=======
+  PagoHaberes = false;  // NEW
+  Desahucio = false;    // NEW
+  appsLoading = true;              // <- NUEVO
+  get AnyApp() {                  // <- NUEVO
+    return this.PagoHaberes || this.Desahucio;
+  }
+  private readonly APP = { PAGO_HABERES: 1, DESAHUCIO: 2 }; // NEW
+>>>>>>> 8d61a77 (Actualización: se sube carpeta DesGestionTesoreria con los últimos cambios)
 
   constructor(
     private router: Router,
@@ -68,6 +83,10 @@ export class LayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     private auth: AuthService,
     private toastr: ToastrService,
     private breakpointObserver: BreakpointObserver,
+<<<<<<< HEAD
+=======
+    private api: IngresoFuncionarioService, // NEW
+>>>>>>> 8d61a77 (Actualización: se sube carpeta DesGestionTesoreria con los últimos cambios)
   ) {
     const savedTheme = localStorage.getItem('theme');
     this.isDarkMode = savedTheme === 'dark';
@@ -86,7 +105,14 @@ export class LayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.currentUser = this.auth.getCurrentUser();
+<<<<<<< HEAD
     // console.log('Usuario actual:', this.currentUser);
+=======
+    console.log('Current user:', this.currentUser);
+    console.log('Usuario actual:', this.currentUser.primer_nombre);
+
+
+>>>>>>> 8d61a77 (Actualización: se sube carpeta DesGestionTesoreria con los últimos cambios)
 
     //Al completar tiempo de expiracion
     const changedAtStr = this.currentUser.password_changed_at;
@@ -101,6 +127,34 @@ export class LayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       console.warn('No se encontró la fecha de cambio de contraseña');
     }
+<<<<<<< HEAD
+=======
+
+    const rut = this.auth.getCurrentUser()?.rut;
+    if (rut) {
+      this.cargarAppsDeUsuario(rut);
+    }
+
+
+  }
+
+  private cargarAppsDeUsuario(rut: string) {
+    this.appsLoading = true;
+    this.api.getAppsDeRut(rut).subscribe({
+      next: (res: any) => {
+        const ids: number[] = res?.apps || [];
+        this.PagoHaberes = ids.includes(this.APP.PAGO_HABERES);
+        this.Desahucio  = ids.includes(this.APP.DESAHUCIO);
+        this.appsLoading = false;              // <- NUEVO
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.PagoHaberes = false;
+        this.Desahucio = false;
+        this.appsLoading = false;             // <- NUEVO
+      }
+    });
+>>>>>>> 8d61a77 (Actualización: se sube carpeta DesGestionTesoreria con los últimos cambios)
   }
 
   ngAfterViewInit(): void {
@@ -121,6 +175,11 @@ export class LayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+<<<<<<< HEAD
+=======
+
+  
+>>>>>>> 8d61a77 (Actualización: se sube carpeta DesGestionTesoreria con los últimos cambios)
   actualizarExpiracionClave(changedAtStr: string) {
     const changedAt = new Date(changedAtStr.replace(' ', 'T'));
     const expirationDate = new Date(changedAt.getTime() + 60 * 24 * 60 * 60 * 1000);

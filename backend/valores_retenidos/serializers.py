@@ -1,8 +1,84 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+<<<<<<< HEAD
 from .models import Funcionario, ReporteFuncionario, PeriodoRemuneracion, Estado, SeguimientoUsuario, Concepto, MotivoPago, Grado, PerfilUsuario
 
 
+=======
+from .models import Aplicacion, Funcionario, ReporteFuncionario, PeriodoRemuneracion, Estado, SeguimientoUsuario, Concepto, MotivoPago, Grado, PerfilUsuario, Rol
+
+
+
+
+
+class AplicacionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Aplicacion
+        fields = ["id_aplicacion","nombre"]
+
+# === Serializer específico para Perfilamiento ===
+class FuncionarioPerfilSerializer(serializers.ModelSerializer):
+    # IDs para relaciones (rol / grado) y nombres de solo lectura
+    grado = serializers.PrimaryKeyRelatedField(
+        queryset=Grado.objects.all(), required=False, allow_null=True
+    )
+    rol = serializers.PrimaryKeyRelatedField(
+        queryset=Rol.objects.all(), required=False, allow_null=True
+    )
+    grado_nombre = serializers.CharField(source='grado.nombre_grado', read_only=True)
+    rol_nombre   = serializers.CharField(source='rol.nombre_rol',   read_only=True)
+
+    # dotación opcional (si no la envías desde el front)
+    dotacion = serializers.CharField(required=False, allow_blank=True, default='')
+
+    # Choices reales del modelo
+    area_trabajo = serializers.ChoiceField(
+        choices=Funcionario._meta.get_field('area_trabajo').choices
+    )
+
+    class Meta:
+        model  = Funcionario
+        fields = [
+            'rut', 'nombre',
+            'grado', 'grado_nombre',
+            'dotacion',
+            'rol', 'rol_nombre',
+            'area_trabajo',
+        ]
+
+    # Normaliza RUT (sin puntos ni guion)
+    def validate_rut(self, value: str) -> str:
+        rut = (value or '').replace('.', '').replace('-', '').upper()
+        if not rut:
+            raise serializers.ValidationError('RUT requerido')
+        if not (7 <= len(rut) <= 9):
+            raise serializers.ValidationError('Formato de RUT inválido')
+        return rut
+
+    # POST: crea si no existe, o actualiza si ya existe (upsert)
+    def create(self, validated_data):
+        validated_data.setdefault('dotacion', '')  # <- default
+        rut = validated_data['rut']
+        obj, _created = Funcionario.objects.update_or_create(
+            rut=rut,
+            defaults=validated_data,
+        )
+        return obj
+
+    # PATCH/PUT: actualiza normal
+    def update(self, instance, validated_data):
+        validated_data.setdefault('dotacion', '')  # <- default
+        for k, v in validated_data.items():
+            setattr(instance, k, v)
+        instance.save()
+        return instance
+
+class RolSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rol
+        fields = ["id_rol", "nombre_rol"]
+
+>>>>>>> 8d61a77 (Actualización: se sube carpeta DesGestionTesoreria con los últimos cambios)
 #CONCEPTO 
 class ConceptoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -17,10 +93,20 @@ class GradoSerializer(serializers.ModelSerializer):
 
 #FUNCIONARIO
 class FuncionarioSerializer(serializers.ModelSerializer):
+<<<<<<< HEAD
     grado_nombre = serializers.CharField(source='grado.nombre_grado', read_only=True)
     class Meta:
         model = Funcionario
         fields = ['rut', 'nombre', 'grado','grado_nombre']
+=======
+    #para llamar desde otra tabla, FK
+    grado_nombre = serializers.CharField(source='grado.nombre_grado', read_only=True)
+    rol_nombre =  serializers.CharField(source='rol.nombre_rol', read_only=True)
+    
+    class Meta:
+        model = Funcionario
+        fields = ['rut', 'nombre', 'grado','area_trabajo','rol','rol_nombre','grado_nombre']
+>>>>>>> 8d61a77 (Actualización: se sube carpeta DesGestionTesoreria con los últimos cambios)
 
     def to_internal_value(self, data):
         rut = data.get('rut')
@@ -192,3 +278,64 @@ class PerfilUsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = PerfilUsuario
         fields = '__all__'
+<<<<<<< HEAD
+=======
+
+# === Serializer específico para Perfilamiento ===
+class FuncionarioPerfilSerializer(serializers.ModelSerializer):
+    # IDs para relaciones (rol / grado) y nombres de solo lectura
+    grado = serializers.PrimaryKeyRelatedField(
+        queryset=Grado.objects.all(), required=False, allow_null=True
+    )
+    rol = serializers.PrimaryKeyRelatedField(
+        queryset=Rol.objects.all(), required=False, allow_null=True
+    )
+    grado_nombre = serializers.CharField(source='grado.nombre_grado', read_only=True)
+    rol_nombre   = serializers.CharField(source='rol.nombre_rol',   read_only=True)
+
+    # dotación opcional (si no la envías desde el front)
+    dotacion = serializers.CharField(required=False, allow_blank=True, default='')
+
+    # Choices reales del modelo
+    area_trabajo = serializers.ChoiceField(
+        choices=Funcionario._meta.get_field('area_trabajo').choices
+    )
+
+    class Meta:
+        model  = Funcionario
+        fields = [
+            'rut', 'nombre',
+            'grado', 'grado_nombre',
+            'dotacion',
+            'rol', 'rol_nombre',
+            'area_trabajo',
+        ]
+
+    # Normaliza RUT (sin puntos ni guion)
+    def validate_rut(self, value: str) -> str:
+        rut = (value or '').replace('.', '').replace('-', '').upper()
+        if not rut:
+            raise serializers.ValidationError('RUT requerido')
+        if not (7 <= len(rut) <= 9):
+            raise serializers.ValidationError('Formato de RUT inválido')
+        return rut
+
+    # POST: crea si no existe, o actualiza si ya existe (upsert)
+    def create(self, validated_data):
+        validated_data.setdefault('dotacion', '')  # <- default
+        rut = validated_data['rut']
+        obj, _created = Funcionario.objects.update_or_create(
+            rut=rut,
+            defaults=validated_data,
+        )
+        return obj
+
+    # PATCH/PUT: actualiza normal
+    def update(self, instance, validated_data):
+        validated_data.setdefault('dotacion', '')  # <- default
+        for k, v in validated_data.items():
+            setattr(instance, k, v)
+        instance.save()
+        return instance
+
+>>>>>>> 8d61a77 (Actualización: se sube carpeta DesGestionTesoreria con los últimos cambios)
